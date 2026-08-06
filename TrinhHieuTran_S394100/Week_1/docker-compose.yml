@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    container_name: test-postgres
+    environment:
+      - POSTGRES_USER=trinhtran
+      - POSTGRES_PASSWORD=Ok123
+      - POSTGRES_DB=trinh_tran_test
+    ports:
+      - "5432:5432"
+    networks:
+      - backend-network
+    volumes:
+      - db-postgres-data:/var/lib/postgresql/data
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  db-postgres-data: 
