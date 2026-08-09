@@ -1,0 +1,1 @@
+Started with the initiation of the BRD for the JobTrack project, preparing rough notes covering the initial requirements, status workflow, and user stories before moving on to the full document.
