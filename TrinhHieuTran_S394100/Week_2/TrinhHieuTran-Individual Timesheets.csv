@@ -1,0 +1,15 @@
+EACH INDIVIDUAL MUST HAVE TO ENTER 6 HOURS TIME LOGGING IN THIS PAGE PER EACH WEEK,,,,
+Week,StudentId,Name,Hours [1-6],Activity details
+Week-1,s394100,Trinh Hieu Tran,1,Research on week 1 - roles and skills. 
+Week-1,s394101,Trinh Hieu Tran,2,Setup github repository
+Week-1,s394102,Trinh Hieu Tran,3,Research about trending technology for web application
+Week-1,s394103,Trinh Hieu Tran,4,Watched tutorial video on using .Net Core API for development
+Week-1,s394104,Trinh Hieu Tran,5,"Install tool for coding: VS Code, Docker"
+Week-1,s394105,Trinh Hieu Tran,6,"Research, install and setup PostgresQL database using Docker"
+,,,,
+Week-2,s394100,Trinh Hieu Tran,1,"Reviewed Week 2 task requirements and identified required tools for Developer and Database Administrator roles, including Jira, GitHub, VS Code, Docker, Visual Studio, Node.js, React, .NET Core, and PostgreSQL"
+Week-2,s394101,Trinh Hieu Tran,2,"Researched Jira for Agile project management, including project boards, backlog, sprint planning, issue types, task assignment, and status tracking."
+Week-2,s394102,Trinh Hieu Tran,3,"Created or explored Jira project setup for the group, reviewed how to create tasks/backlog items, and linked Jira usage to weekly project tracking."
+Week-2,s394103,Trinh Hieu Tran,4,Watched tutorial resources on React and .NET Core API development to understand how the frontend and backend can work together in one project.
+Week-2,s394104,Trinh Hieu Tran,5,Research about Developer and Database Admin role
+Week-2,s394105,Trinh Hieu Tran,6,"Prepared Week 2 evidence for GitHub, including notes on tool research, Jira setup, development environment setup, useful tutorial links, and screenshots where applicable."

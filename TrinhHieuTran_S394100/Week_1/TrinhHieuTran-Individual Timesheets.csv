@@ -1,0 +1,8 @@
+EACH INDIVIDUAL MUST HAVE TO ENTER 6 HOURS TIME LOGGING IN THIS PAGE PER EACH WEEK,,,,
+Week,StudentId,Name,Hours [1-6],Activity details
+Week-1,s394100,Trinh Hieu Tran,1,Research on week 1 - roles and skills. 
+Week-1,s394101,Trinh Hieu Tran,2,Setup github repository
+Week-1,s394102,Trinh Hieu Tran,3,Research about trending technology for web application
+Week-1,s394103,Trinh Hieu Tran,4,Watched tutorial video on using .Net Core API for development
+Week-1,s394104,Trinh Hieu Tran,5,"Install tool for coding: VS Code, Docker"
+Week-1,s394105,Trinh Hieu Tran,6,"Research, install and setup PostgresQL database using Docker"
