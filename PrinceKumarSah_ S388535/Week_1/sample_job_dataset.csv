@@ -1,0 +1,6 @@
+job_id,job_title,company,location,employment_type,salary_min,salary_max,category,skills,posted_date,source
+J001,Software Developer,ABC Technology,"Sydney, NSW",Full-time,85000,105000,Information Technology,"Java, SQL, Git",2026-08-10,Company Website
+J002,Junior Data Analyst,DataWorks,"Parramatta, NSW",Full-time,70000,85000,Data & Analytics,"Excel, SQL, Power BI",2026-08-09,Job Board
+J003,IT Support Technician,TechCare,"Sydney, NSW",Part-time,60000,72000,Information Technology,"Windows, Networking, Hardware",2026-08-08,Company Website
+J004,Software Developer,ABC Technology,"Sydney, NSW",Full-time,85000,105000,Information Technology,"Java, SQL, Git",2026-08-10,Company Website
+J005,Graduate Software Engineer,FutureSoft,"Melbourne, VIC",Full-time,65000,80000,Software Engineering,"JavaScript, Git, Testing",2026-08-07,University Careers
