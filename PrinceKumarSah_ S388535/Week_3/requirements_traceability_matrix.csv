@@ -1,0 +1,11 @@
+Requirement ID,Requirement,Test Case ID,Feature Area,Priority
+REQ-01,User can search jobs by keyword,TC-W3-001,Search,High
+REQ-02,User can filter jobs by location,TC-W3-002,Filtering,High
+REQ-03,User can filter jobs by employment type,TC-W3-003,Filtering,High
+REQ-04,User can filter jobs by category,TC-W3-004,Filtering,Medium
+REQ-05,User can combine search and filters,TC-W3-005,Search + Filtering,High
+REQ-06,User can clear applied filters,TC-W3-006,Filtering,Medium
+REQ-07,User can view complete job details,TC-W3-007,Job Details,High
+REQ-08,User can access the application link,TC-W3-008,Job Details,High
+REQ-09,System handles no-result searches clearly,TC-W3-009,Search,Medium
+REQ-10,Invalid/incomplete job data does not break the listing,TC-W3-010,Data Quality,High

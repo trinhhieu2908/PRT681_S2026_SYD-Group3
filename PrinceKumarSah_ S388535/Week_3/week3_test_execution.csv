@@ -1,0 +1,11 @@
+Test Case ID,Scenario,Test Action,Expected Result,Status,Priority
+TC-W3-001,Search by exact job title,Enter a valid job title and submit search,Matching job listings are displayed,Not Executed,High
+TC-W3-002,Filter by location,Select a location filter,Only jobs from selected location are displayed,Not Executed,High
+TC-W3-003,Filter by employment type,Select Full-time/Part-time/etc.,Only matching jobs are displayed,Not Executed,High
+TC-W3-004,Filter by category,Select a job category,Only matching category listings are displayed,Not Executed,Medium
+TC-W3-005,Combine search and filters,Enter keyword and select location/category,Results satisfy all selected criteria,Not Executed,High
+TC-W3-006,Clear filters,Apply filters then select reset/clear,Default results return,Not Executed,Medium
+TC-W3-007,View job details,Select a job card,Correct job information is displayed,Not Executed,High
+TC-W3-008,Open application link,Select application button/link,Correct external application page opens,Not Executed,High
+TC-W3-009,No-result search,Search for a non-existent keyword,Clear no-results message is shown,Not Executed,Medium
+TC-W3-010,Incomplete data handling,Load a record with optional data missing,Application remains stable and displays available information,Not Executed,High

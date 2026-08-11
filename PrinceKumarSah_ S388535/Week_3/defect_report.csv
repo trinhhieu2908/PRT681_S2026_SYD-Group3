@@ -1,0 +1,4 @@
+Issue ID,Title,Area,Description,Severity,Status,Recommended Action
+BUG/DQ-001,Potential duplicate job record,Data Quality,J001 and J004 contain the same key job information in the sample dataset.,Medium,Open,Review duplicate handling before production data is loaded.
+BUG-002,Search results may not handle no-result state,Search,Needs verification when the search feature is implemented.,Medium,To Verify,Execute TC-W3-009 on the working application.
+BUG-003,Application URL validation,Job Details,Application links need validation before users are redirected.,Medium,To Verify,Execute TC-W3-008 with valid and invalid URLs.
