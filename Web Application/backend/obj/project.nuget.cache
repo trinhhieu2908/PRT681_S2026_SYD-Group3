@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "CqcuJthyhY0=",
+  "success": true,
+  "projectFilePath": "/Users/dylan/DATA/studying/Sem3/Software practice/PRT681_S2026_SYD-Group3/Web Application/backend/JobTrack.Api.csproj",
+  "expectedPackageFiles": [
+    "/Users/dylan/.nuget/packages/microsoft.aspnetcore.openapi/10.0.11/microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
+    "/Users/dylan/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Access to the path '/Users/dylan/.local/share' is denied.",
+      "projectPath": "/Users/dylan/DATA/studying/Sem3/Software practice/PRT681_S2026_SYD-Group3/Web Application/backend/JobTrack.Api.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/dylan/DATA/studying/Sem3/Software practice/PRT681_S2026_SYD-Group3/Web Application/backend/JobTrack.Api.csproj",
+      "targetGraphs": []
+    }
+  ]
+}
