@@ -1,0 +1,8 @@
+bin/
+obj/
+.dotnet-data/
+.nuget/
+*.db
+*.db-shm
+*.db-wal
+*.env

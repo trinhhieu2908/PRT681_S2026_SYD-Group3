@@ -1,0 +1,14 @@
+namespace JobTrack.Common.Pagination;
+
+public sealed record PagedResult<TItem>(
+    IReadOnlyList<TItem> Items,
+    int PageNumber,
+    int PageSize,
+    int TotalCount)
+{
+    public int TotalPages => PageSize <= 0 ? 0 : (int)Math.Ceiling(TotalCount / (double)PageSize);
+
+    public bool HasPreviousPage => PageNumber > 1;
+
+    public bool HasNextPage => PageNumber < TotalPages;
+}

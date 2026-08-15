@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    container_name: job-track-backend-db
+    environment:
+      POSTGRES_USER: dylan
+      POSTGRES_PASSWORD: dylan
+      POSTGRES_DB: job_track
+    ports:
+      - "5432:5432"
+    networks:
+      - job-track-backend-network
+    volumes:
+      - db-postgres-data:/var/lib/postgresql/data
+
+networks:
+  job-track-backend-network:
+    driver: bridge
+
+volumes:
+  db-postgres-data:
