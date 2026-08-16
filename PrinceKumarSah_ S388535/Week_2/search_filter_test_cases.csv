@@ -1,0 +1,11 @@
+Test ID,Test Scenario,Test Steps,Expected Result,Priority,Status
+TC-W2-001,Search by exact job title,Enter 'Software Developer' in search,Only relevant Software Developer listings are displayed,High,Not Executed
+TC-W2-002,Search by partial title,Enter 'Developer' in search,Listings containing the search term are displayed,High,Not Executed
+TC-W2-003,Search with no match,Enter a job title that does not exist,A clear no-results message is displayed,Medium,Not Executed
+TC-W2-004,Filter by location,"Select Sydney, NSW","Only Sydney, NSW jobs are displayed",High,Not Executed
+TC-W2-005,Filter by employment type,Select Full-time,Only Full-time jobs are displayed,High,Not Executed
+TC-W2-006,Filter by category,Select Information Technology,Only jobs in the selected category are displayed,High,Not Executed
+TC-W2-007,Combine search and filters,Search 'Developer' and select Sydney,Results satisfy both the search term and location,High,Not Executed
+TC-W2-008,Clear filters,Apply filters then select Clear/Reset,All available jobs are displayed again,Medium,Not Executed
+TC-W2-009,Open job details,Select a job from results,"Correct title, company, location and other details are displayed",High,Not Executed
+TC-W2-010,Invalid/empty search,Submit an empty search,System remains stable and shows the default job list,Medium,Not Executed

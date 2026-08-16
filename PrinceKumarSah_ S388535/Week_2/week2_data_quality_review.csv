@@ -1,0 +1,6 @@
+Issue ID,Check,Finding,Severity,Recommended Action
+DQ-001,Duplicate job listing,J001 and J004 contain the same job information,Medium,Flag for duplicate review
+DQ-002,Required fields,All sample records contain job title and company,Low,No action required
+DQ-003,Salary range,All sample salary minimums are less than maximums,Low,No action required
+DQ-004,Employment type consistency,Sample values use Full-time or Part-time consistently,Low,No action required
+DQ-005,Location consistency,"Location values follow City, State format",Low,Continue using one standard format
