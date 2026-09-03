@@ -81,6 +81,66 @@ Swagger JSON:
 http://localhost:5100/swagger/v1/swagger.json
 ```
 
+## Authentication Endpoints
+
+The authentication API provides:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/revoke
+```
+
+Access tokens expire after 15 minutes. Refresh tokens expire after 180 days
+and are rotated and stored as hashes in the database.
+
+## Create and Apply EF Core Migration
+
+Install the EF CLI if it is not already installed:
+
+```bash
+dotnet tool install --global dotnet-ef --version 10.0.11
+```
+
+```bash
+dotnet ef migrations add CreateUsers \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj \
+  --output-dir Migrations
+```
+
+This creates migration files inside:
+
+```text
+src/JobTrack.Database/Migrations/
+```
+
+Review the generated `CreateUsers.cs`, designer file, and model snapshot.
+Do not execute those files individually.
+
+Make sure the PostgreSQL container is running, then apply the migration:
+
+```bash
+dotnet ef database update \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+The `migrations add` command only creates migration files. The `database update` command executes the migration against PostgreSQL and records it in
+`__EFMigrationsHistory`.
+
+To generate a SQL script for review or deployment instead of applying the
+migration directly:
+
+```bash
+dotnet ef migrations script \
+  --idempotent \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj \
+  --output migrations.sql
+```
+
 ## Test Endpoint
 
 ```text
@@ -115,8 +175,8 @@ The backend foundation is set up with:
 - Swagger UI
 - EF Core with PostgreSQL
 - Docker Compose Postgres database
+- JWT authentication with access and refresh tokens
 - Generic repository base
 - Unit of work abstraction
 - Shared common result and exception types
 
-Feature modules are not implemented yet.
