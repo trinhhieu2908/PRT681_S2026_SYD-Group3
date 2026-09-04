@@ -18,9 +18,25 @@ namespace JobTrack.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public const string FrontendCorsPolicy = "FrontendCors";
+
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
+        services.AddCors(options =>
+        {
+            options.AddPolicy(FrontendCorsPolicy, policy =>
+            {
+                var allowedOrigins = configuration
+                    .GetSection("Cors:AllowedOrigins")
+                    .Get<string[]>() ?? [];
+
+                policy
+                    .WithOrigins(allowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         services.AddOpenApi();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
