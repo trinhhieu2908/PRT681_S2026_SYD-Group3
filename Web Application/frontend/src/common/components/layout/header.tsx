@@ -10,9 +10,14 @@ interface HeaderProps {
 const Header = ({ onOpenSidebar }: HeaderProps) => {
   const { user } = useAuth();
   const location = useLocation();
-  const pageTitle = location.pathname.startsWith(routes.jobApplicationsPath)
-    ? "Job applications"
-    : "Dashboard";
+  const isJobApplicationDetail =
+    location.pathname.startsWith(`${routes.jobApplicationsPath}/`) &&
+    location.pathname !== routes.jobApplicationsPath;
+  const pageTitle = isJobApplicationDetail
+    ? "Application details"
+    : location.pathname === routes.jobApplicationsPath
+      ? "Job applications"
+      : "Dashboard";
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">

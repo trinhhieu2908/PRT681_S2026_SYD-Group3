@@ -10,6 +10,12 @@ import {
 } from "@/modules/job-application/model/responses";
 
 export const jobApplicationApi = {
+  getById: async (id: string): Promise<JobApplicationResponse> => {
+    return axiosClient.get<JobApplicationResponse, JobApplicationResponse>(
+      `${JOB_APPLICATION_API.root}/${id}`,
+    );
+  },
+
   getAll: async ({
     pageNumber,
     pageSize,

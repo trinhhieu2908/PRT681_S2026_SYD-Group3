@@ -1,76 +1,47 @@
 import {
+  ArrowRight,
   BriefcaseBusiness,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
   Plus,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import {
   MODAL_VIEWS,
   useModalAction,
 } from "@/common/components/modal/modal-context";
-import { Badge } from "@/common/components/ui/badge";
 import { Button } from "@/common/components/ui/button";
 import { Spinner } from "@/common/components/ui/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/common/components/ui/table";
-import { formatDate } from "@/common/utils/date";
+import JobApplicationCard from "@/modules/job-application/components/job-application-card";
 import {
   DEFAULT_JOB_APPLICATION_PAGE_SIZE,
   useJobApplications,
 } from "@/modules/job-application/hooks/useJobApplications";
-import {
-  JobApplicationResponse,
-  JobApplicationStatus,
-} from "@/modules/job-application/model/responses";
 
-const statusStyles: Record<JobApplicationStatus, string> = {
-  Applied: "border-blue-200 bg-blue-50 text-blue-700",
-  Interview: "border-purple-200 bg-purple-50 text-purple-700",
-  Offer: "border-green-200 bg-green-50 text-green-700",
-  Rejected: "border-red-200 bg-red-50 text-red-700",
-  Withdrawn: "border-gray-200 bg-gray-100 text-gray-700",
-  Archived: "border-amber-200 bg-amber-50 text-amber-700",
-};
-
-interface ApplicationLinksProps {
-  application: JobApplicationResponse;
-}
-
-const ApplicationLinks = ({ application }: ApplicationLinksProps) => {
-  const links = [
-    { label: "Job", href: application.jobLink },
-    { label: "Portfolio", href: application.portfolioLink },
-    { label: "GitHub", href: application.gitHubLink },
-  ].filter((link): link is { label: string; href: string } =>
-    Boolean(link.href),
-  );
-
-  if (links.length === 0) {
-    return <span className="text-gray-400">—</span>;
-  }
-
+const LoadingJourney = () => {
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1">
-      {links.map((link) => (
-        <a
-          key={link.label}
-          href={link.href}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:text-primary-900 hover:underline"
+    <div className="relative space-y-4 before:absolute before:bottom-10 before:left-10 before:top-10 before:hidden before:w-px before:bg-gray-200 sm:before:block">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div
+          key={index}
+          className="relative grid animate-pulse gap-5 sm:grid-cols-[5.5rem_minmax(0,1fr)]"
         >
-          {link.label}
-          <ExternalLink size={12} />
-        </a>
+          <div className="relative z-10 hidden justify-center sm:flex">
+            <div className="h-20 w-20 rounded-2xl border border-gray-200 bg-white" />
+          </div>
+          <div className="rounded-[1.75rem] border border-gray-200 bg-white px-5 py-5 sm:px-6 sm:py-6">
+            <div className="flex gap-4">
+              <div className="h-14 w-14 shrink-0 rounded-2xl bg-gray-200" />
+              <div className="min-w-0 flex-1">
+                <div className="h-4 w-28 rounded bg-gray-200" />
+                <div className="mt-3 h-7 w-3/5 rounded bg-gray-200" />
+                <div className="mt-6 h-4 w-2/5 rounded bg-gray-100" />
+              </div>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -92,163 +63,160 @@ const JobApplicationPage = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-primary-700">
-              Application tracker
-            </p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-gray-950">
-              Job applications
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Track every opportunity in one place.
-            </p>
+      <div className="mx-auto max-w-6xl">
+        <section className="relative overflow-hidden rounded-[2rem] bg-gray-950 px-6 py-7 text-white shadow-[0_28px_70px_-38px_rgba(15,118,110,0.8)] sm:px-9 sm:py-9">
+          <div className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full bg-primary-500/30 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-36 left-1/3 h-72 w-72 rounded-full bg-secondary-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute right-1/3 top-0 h-px w-48 bg-gradient-to-r from-transparent via-primary-300/70 to-transparent" />
+
+          <div className="relative flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary-200">
+                <Sparkles className="h-4 w-4" />
+                Your search, in motion
+              </p>
+              <h1 className="mt-4 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
+                Every opportunity has a story.
+              </h1>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-gray-300 sm:text-base">
+                Follow each application from the first click to the next chapter
+                in your career.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              className="h-12 self-start rounded-full bg-white px-5 text-gray-950 shadow-xl shadow-black/20 hover:bg-primary-50 sm:self-auto"
+              onClick={() => openModal(MODAL_VIEWS.CREATE_JOB_APPLICATION)}
+            >
+              <Plus />
+              Add opportunity
+            </Button>
           </div>
+        </section>
 
-          <Button
-            type="button"
-            className="h-11 self-start px-5 sm:self-auto"
-            onClick={() => openModal(MODAL_VIEWS.CREATE_JOB_APPLICATION)}
-          >
-            <Plus />
-            Create job application
-          </Button>
-        </div>
-
-        <section className="mt-8 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-          <div className="flex min-h-14 items-center justify-between border-b border-gray-200 px-5">
-            <p className="text-sm font-medium text-gray-700">
-              {totalCount} {totalCount === 1 ? "application" : "applications"}
-            </p>
+        <section className="mt-9">
+          <div className="flex min-h-12 items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-700">
+                Application trail
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-gray-950">
+                Where your journey stands
+              </h2>
+            </div>
             {isFetching && !isPending && (
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 pb-1 text-xs text-gray-500">
                 <Spinner size="sm" className="border-t-primary-600" />
-                Updating
+                Refreshing your trail
               </div>
             )}
           </div>
 
-          {isPending ? (
-            <div className="flex min-h-72 items-center justify-center">
-              <div className="flex flex-col items-center gap-3 text-sm text-gray-500">
-                <Spinner className="border-t-primary-600" />
-                Loading job applications
+          <div className="mt-6">
+            {isPending ? (
+              <LoadingJourney />
+            ) : error ? (
+              <div className="flex min-h-72 flex-col items-center justify-center rounded-[1.75rem] border border-rose-100 bg-gradient-to-br from-white to-rose-50/50 px-6 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+                  <RefreshCw size={24} />
+                </div>
+                <p className="mt-5 font-semibold text-gray-950">
+                  Your application trail could not be loaded
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-6 text-gray-600">
+                  {error instanceof Error
+                    ? error.message
+                    : "Please try again in a moment."}
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-5 rounded-full"
+                  onClick={() => void refetch()}
+                >
+                  <RefreshCw />
+                  Try again
+                </Button>
               </div>
-            </div>
-          ) : error ? (
-            <div className="flex min-h-72 flex-col items-center justify-center px-6 text-center">
-              <p className="font-semibold text-gray-900">
-                Could not load job applications
-              </p>
-              <p className="mt-2 max-w-md text-sm text-gray-600">
-                {error instanceof Error
-                  ? error.message
-                  : "Please try again in a moment."}
-              </p>
+            ) : data.items.length === 0 ? (
+              <div className="relative flex min-h-80 flex-col items-center justify-center overflow-hidden rounded-[1.75rem] border border-dashed border-primary-200 bg-gradient-to-br from-white via-primary-50/50 to-secondary-50/50 px-6 text-center">
+                <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-primary-100/70 blur-3xl" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-950 text-white shadow-xl shadow-primary-900/15">
+                  <BriefcaseBusiness size={27} />
+                </div>
+                <p className="relative mt-5 text-lg font-semibold text-gray-950">
+                  Your next chapter starts here
+                </p>
+                <p className="relative mt-2 max-w-sm text-sm leading-6 text-gray-600">
+                  Add your first opportunity and watch your job search take
+                  shape.
+                </p>
+                <Button
+                  type="button"
+                  className="relative mt-6 rounded-full px-5"
+                  onClick={() => openModal(MODAL_VIEWS.CREATE_JOB_APPLICATION)}
+                >
+                  Add your first opportunity
+                  <ArrowRight />
+                </Button>
+              </div>
+            ) : (
+              <div className="relative space-y-4 before:absolute before:bottom-10 before:left-10 before:top-10 before:hidden before:w-px before:bg-gradient-to-b before:from-primary-200 before:via-gray-200 before:to-secondary-200 sm:before:block">
+                {data.items.map((application) => (
+                  <JobApplicationCard
+                    key={application.id}
+                    application={application}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {!isPending && !error && totalCount > 0 && (
+          <nav
+            className="mt-8 flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between"
+            aria-label="Job application pagination"
+          >
+            <p className="text-sm text-gray-500">
+              Showing{" "}
+              <span className="font-semibold text-gray-900">
+                {rangeStart}–{rangeEnd}
+              </span>{" "}
+              of {totalCount} opportunities
+            </p>
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
-                className="mt-5"
-                onClick={() => void refetch()}
+                size="sm"
+                className="rounded-full px-4"
+                disabled={!data.hasPreviousPage || isFetching}
+                onClick={() =>
+                  setPageNumber((currentPage) => Math.max(1, currentPage - 1))
+                }
               >
-                <RefreshCw />
-                Try again
+                <ChevronLeft />
+                Previous
+              </Button>
+              <span className="min-w-20 text-center text-sm font-semibold text-gray-700">
+                {data.pageNumber} / {totalPages}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-full px-4"
+                disabled={!data.hasNextPage || isFetching}
+                onClick={() => setPageNumber((currentPage) => currentPage + 1)}
+              >
+                Next
+                <ChevronRight />
               </Button>
             </div>
-          ) : data.items.length === 0 ? (
-            <div className="flex min-h-72 flex-col items-center justify-center px-6 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-700">
-                <BriefcaseBusiness size={26} />
-              </div>
-              <p className="mt-4 font-semibold text-gray-900">
-                No job applications yet
-              </p>
-              <p className="mt-2 max-w-sm text-sm text-gray-600">
-                Create your first application to start tracking your progress.
-              </p>
-            </div>
-          ) : (
-            <Table className="min-w-[900px]">
-              <TableHeader className="bg-gray-50">
-                <TableRow className="hover:bg-gray-50">
-                  <TableHead>Company</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Platform</TableHead>
-                  <TableHead>Application date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Links</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.items.map((application) => (
-                  <TableRow key={application.id}>
-                    <TableCell className="font-semibold text-gray-950">
-                      {application.companyName}
-                    </TableCell>
-                    <TableCell className="text-gray-700">
-                      {application.roleTitle}
-                    </TableCell>
-                    <TableCell className="text-gray-700">
-                      {application.platform}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
-                      {formatDate(application.applicationDate, "short")}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={statusStyles[application.currentStatus]}
-                      >
-                        {application.currentStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <ApplicationLinks application={application} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-
-          {!isPending && !error && totalCount > 0 && (
-            <div className="flex flex-col gap-3 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-gray-600">
-                Showing {rangeStart}–{rangeEnd} of {totalCount}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={!data.hasPreviousPage || isFetching}
-                  onClick={() =>
-                    setPageNumber((currentPage) => Math.max(1, currentPage - 1))
-                  }
-                >
-                  <ChevronLeft />
-                  Previous
-                </Button>
-                <span className="min-w-24 text-center text-sm font-medium text-gray-700">
-                  Page {data.pageNumber} of {totalPages}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={!data.hasNextPage || isFetching}
-                  onClick={() =>
-                    setPageNumber((currentPage) => currentPage + 1)
-                  }
-                >
-                  Next
-                  <ChevronRight />
-                </Button>
-              </div>
-            </div>
-          )}
-        </section>
+          </nav>
+        )}
       </div>
     </div>
   );

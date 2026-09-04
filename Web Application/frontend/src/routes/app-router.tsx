@@ -9,6 +9,9 @@ const DashboardPage = lazy(() => import("@/pages/dashboard/dashboard-page"));
 const JobApplicationPage = lazy(
   () => import("@/pages/job-application/job-application-page"),
 );
+const JobApplicationDetailPage = lazy(
+  () => import("@/pages/job-application/job-application-detail-page"),
+);
 const NotFoundPage = lazy(() => import("@/pages/not-found/not-found-page"));
 
 const router = createBrowserRouter([
@@ -31,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: routes.jobApplicationsPath,
         element: <JobApplicationPage />,
+      },
+      {
+        path: routes.jobApplicationDetailPath,
+        element: <JobApplicationDetailPage />,
       },
       {
         path: "*",
