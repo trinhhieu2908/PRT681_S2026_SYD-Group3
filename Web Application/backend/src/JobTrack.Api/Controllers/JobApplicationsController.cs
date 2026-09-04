@@ -51,6 +51,24 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
         return Ok(response);
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<JobApplicationResponse>> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await jobApplicationService.GetByIdAsync(
+            id,
+            userId,
+            cancellationToken);
+
+        return Ok(response);
+    }
+
     private bool TryGetUserId(out Guid userId)
     {
         return Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);

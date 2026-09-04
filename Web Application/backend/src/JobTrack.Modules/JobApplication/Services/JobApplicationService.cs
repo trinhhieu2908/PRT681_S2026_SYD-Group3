@@ -41,6 +41,20 @@ public sealed class JobApplicationService(
         return MapResponse(application);
     }
 
+    public async Task<JobApplicationResponse> GetByIdAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var jobApplication = await jobApplicationRepository.GetByIdAndUserIdAsync(
+            id,
+            userId,
+            cancellationToken)
+            ?? throw new NotFoundException("Job application was not found.");
+
+        return MapResponse(jobApplication);
+    }
+
     public async Task<PagedResult<JobApplicationResponse>> GetAllAsync(
         Guid userId,
         int pageNumber,

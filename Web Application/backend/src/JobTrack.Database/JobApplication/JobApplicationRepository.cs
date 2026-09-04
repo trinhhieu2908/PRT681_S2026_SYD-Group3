@@ -14,6 +14,18 @@ public sealed class JobApplicationRepository(JobTrackDbContext dbContext)
         return dbContext.JobApplications.AddAsync(jobApplication, cancellationToken).AsTask();
     }
 
+    public Task<JobApplicationEntity?> GetByIdAndUserIdAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return dbContext.JobApplications
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                jobApplication => jobApplication.Id == id && jobApplication.UserId == userId,
+                cancellationToken);
+    }
+
     public async Task<(IReadOnlyList<JobApplicationEntity> Items, int TotalCount)> GetPagedByUserIdAsync(
         Guid userId,
         int pageNumber,

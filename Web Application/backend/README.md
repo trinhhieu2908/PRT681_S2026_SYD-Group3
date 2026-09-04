@@ -135,6 +135,16 @@ Authorization: Bearer <access-token>
 
 `pageNumber` starts at `1`. `pageSize` must be between `1` and `100`.
 
+Get one job application by ID:
+
+```http
+GET /api/job-applications/{id}
+Authorization: Bearer <access-token>
+```
+
+The API returns `404 Not Found` when the record does not exist or belongs to a
+different user.
+
 ## Create and Apply EF Core Migration
 
 Install the EF CLI if it is not already installed:
