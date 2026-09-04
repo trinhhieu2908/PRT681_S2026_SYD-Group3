@@ -15,8 +15,7 @@ export const useLogin = () => {
   } = useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
-      // Use auth context to handle login
-      authLogin(response.accessToken, response.refreshToken);
+      authLogin(response);
       navigate(routes.homePath);
     },
   });

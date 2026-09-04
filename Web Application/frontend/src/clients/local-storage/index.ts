@@ -1,6 +1,7 @@
 // Local storage utilities for token management
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
+const REFRESH_TOKEN_EXPIRES_AT_KEY = "refresh_token_expires_at";
 
 // Access token management
 export const getAccessToken = (): string | null => {
@@ -54,8 +55,33 @@ export const removeRefreshToken = (): void => {
   }
 };
 
+export const getRefreshTokenExpiresAt = (): string | null => {
+  try {
+    return localStorage.getItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const setRefreshTokenExpiresAt = (expiresAt: string): void => {
+  try {
+    localStorage.setItem(REFRESH_TOKEN_EXPIRES_AT_KEY, expiresAt);
+  } catch (error) {
+    // Ignore storage errors. The session will be checked again on next load.
+  }
+};
+
+export const removeRefreshTokenExpiresAt = (): void => {
+  try {
+    localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
+  } catch (error) {
+    // Ignore storage errors.
+  }
+};
+
 // Clear all tokens
 export const clearTokens = (): void => {
   removeAccessToken();
   removeRefreshToken();
+  removeRefreshTokenExpiresAt();
 };

@@ -1,15 +1,14 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/common/components/ui/button";
 import { Input } from "@/common/components/ui/input";
-import { useLogin } from "@/modules/auth/hooks/useLogin";
-import { LoginRequest } from "@/modules/auth/model/requests";
-import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
-import { useState } from "react";
+import { useRegister } from "@/modules/auth/hooks/useRegister";
+import { RegisterRequest } from "@/modules/auth/model/requests";
 
-// Zod schema for form validation
-const loginSchema = z.object({
+const registerSchema = z.object({
   email: z
     .string()
     .trim()
@@ -19,33 +18,56 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(1, { message: "Password is required" })
-    .max(128, { message: "Password cannot exceed 128 characters" }),
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(128, { message: "Password cannot exceed 128 characters" })
+    .regex(/\p{Lu}/u, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/\p{Ll}/u, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/\p{Nd}/u, {
+      message: "Password must contain at least one number",
+    })
+    .regex(/[\p{P}\p{S}]/u, {
+      message: "Password must contain at least one special character",
+    }),
 });
 
-const LoginForm = () => {
+interface RegisterFormProps {
+  onRegistered: () => void;
+}
+
+const RegisterForm = ({ onRegistered }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading, error: loginError } = useLogin();
+  const {
+    register: registerUser,
+    isLoading,
+    error,
+  } = useRegister({
+    onSuccess: onRegistered,
+  });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginRequest>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterRequest>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: LoginRequest) => {
-    login(data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+    <form
+      onSubmit={handleSubmit((credentials) => registerUser(credentials))}
+      className="space-y-6"
+      noValidate
+    >
       <div className="space-y-2">
         <label
-          htmlFor="email"
+          htmlFor="register-email"
           className="block text-sm font-semibold text-slate-700"
         >
           Email
@@ -53,7 +75,7 @@ const LoginForm = () => {
         <div className="relative">
           <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            id="email"
+            id="register-email"
             type="email"
             {...register("email")}
             className={`h-12 pl-11 ${
@@ -73,7 +95,7 @@ const LoginForm = () => {
 
       <div className="space-y-2">
         <label
-          htmlFor="password"
+          htmlFor="register-password"
           className="block text-sm font-semibold text-slate-700"
         >
           Password
@@ -81,7 +103,7 @@ const LoginForm = () => {
         <div className="relative">
           <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            id="password"
+            id="register-password"
             type={showPassword ? "text" : "password"}
             {...register("password")}
             className={`h-12 pl-11 pr-11 ${
@@ -89,9 +111,9 @@ const LoginForm = () => {
                 ? "border-red-500"
                 : "border-slate-200 bg-slate-50/80 focus-visible:bg-white"
             }`}
-            placeholder="Enter password"
+            placeholder="Create a password"
             disabled={isLoading}
-            autoComplete="current-password"
+            autoComplete="new-password"
           />
           <button
             type="button"
@@ -106,14 +128,18 @@ const LoginForm = () => {
         {errors.password && (
           <p className="text-sm text-red-600">{errors.password.message}</p>
         )}
+        <p className="text-xs leading-5 text-slate-500">
+          Use 8–128 characters with uppercase, lowercase, a number, and a
+          special character.
+        </p>
       </div>
 
-      {loginError && (
+      {error && (
         <div className="rounded-lg border border-red-100 bg-red-50 p-4">
           <p className="text-sm text-red-600">
-            {loginError instanceof Error
-              ? loginError.message
-              : "Unable to sign in. Please try again."}
+            {error instanceof Error
+              ? error.message
+              : "Unable to create your account. Please try again."}
           </p>
         </div>
       )}
@@ -124,10 +150,10 @@ const LoginForm = () => {
         disabled={isLoading}
       >
         {isLoading ? (
-          "Signing in..."
+          "Creating account..."
         ) : (
           <>
-            Sign in
+            Create account
             <ArrowRight size={18} />
           </>
         )}
@@ -136,4 +162,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

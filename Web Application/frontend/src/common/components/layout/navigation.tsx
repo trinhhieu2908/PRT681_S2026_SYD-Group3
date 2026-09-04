@@ -2,7 +2,11 @@ import { routes } from "@/routes/routes";
 import { LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-const Navigation = () => {
+interface NavigationProps {
+  onNavigate?: () => void;
+}
+
+const Navigation = ({ onNavigate }: NavigationProps) => {
   const location = useLocation();
 
   const navigationItems = [
@@ -22,6 +26,7 @@ const Navigation = () => {
           <Link
             key={item.name}
             to={item.path}
+            onClick={onNavigate}
             className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
               item.active
                 ? "bg-primary-500 text-white shadow-md"

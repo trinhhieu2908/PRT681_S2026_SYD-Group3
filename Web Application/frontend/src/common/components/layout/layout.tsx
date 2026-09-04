@@ -1,13 +1,14 @@
 import { ConfirmationProvider } from "@/common/components/confirmation-modal/confirmation-modal-context";
 import { DrawerProvider, ManagedDrawer } from "@/common/components/drawer";
 import ErrorBoundary from "@/common/components/error-boundary/error-boundary";
+import Header from "@/common/components/layout/header";
 import Sidebar from "@/common/components/layout/sidebar";
 import ManagedModal from "@/common/components/modal/manage-modal";
 import { ModalProvider } from "@/common/components/modal/modal-context";
 import ManagedSheet from "@/common/components/sheet/manage-sheet";
 import { SheetProvider } from "@/common/components/sheet/sheet-context";
 import PageLoadingScreen from "@/common/components/ui/page-loading-screen";
-import { ReactNode, Suspense } from "react";
+import { ReactNode, Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 interface DashboardLayoutProps {
@@ -15,6 +16,8 @@ interface DashboardLayoutProps {
 }
 
 const Layout = ({ children }: DashboardLayoutProps) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <ErrorBoundary>
       <ConfirmationProvider>
@@ -22,11 +25,22 @@ const Layout = ({ children }: DashboardLayoutProps) => {
           <SheetProvider>
             <DrawerProvider>
               <div className="min-h-screen bg-gray-50">
-                {/* Left Sidebar */}
-                <Sidebar />
+                <Sidebar
+                  isOpen={isSidebarOpen}
+                  onClose={() => setIsSidebarOpen(false)}
+                />
 
-                {/* Main Content Area */}
-                <div className="ml-64 flex flex-col min-h-screen">
+                {isSidebarOpen && (
+                  <button
+                    type="button"
+                    className="fixed inset-0 z-30 bg-gray-950/40 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                    aria-label="Close navigation menu"
+                  />
+                )}
+
+                <div className="flex min-h-screen flex-col lg:ml-64">
+                  <Header onOpenSidebar={() => setIsSidebarOpen(true)} />
                   <main className="flex-1">
                     <Suspense fallback={<PageLoadingScreen />}>
                       {children || <Outlet />}
@@ -34,7 +48,6 @@ const Layout = ({ children }: DashboardLayoutProps) => {
                   </main>
                 </div>
 
-                {/* Modal and Sheet Managers */}
                 <ManagedModal />
                 <ManagedSheet />
                 <ManagedDrawer />

@@ -1,7 +1,22 @@
-import { AuthenticatedUser } from "@/modules/auth/model/user";
+export interface TokenResponse {
+  accessToken: string;
+  accessTokenExpiresAtUtc: string;
+  refreshToken: string;
+  refreshTokenExpiresAtUtc: string;
+}
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user?: AuthenticatedUser | null;
+  userId: string;
+  email: string;
+  tokens: TokenResponse;
+}
+
+export interface RegisterResponse {
+  userId: string;
+  email: string;
+  tokens: TokenResponse;
+}
+
+export interface RefreshTokenResponse {
+  tokens: TokenResponse;
 }

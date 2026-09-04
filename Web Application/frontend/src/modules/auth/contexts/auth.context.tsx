@@ -1,21 +1,22 @@
-import { authService } from "@/modules/auth/services/auth.service";
 import { extractUserFromToken } from "@/common/utils/jwt";
 import { AuthenticatedUser } from "@/modules/auth/model/user";
-import React, {
+import { LoginResponse } from "@/modules/auth/model/responses";
+import { authService } from "@/modules/auth/services/auth.service";
+import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
-  useCallback,
 } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: AuthenticatedUser | null;
   isLoading: boolean;
-  login: (accessToken: string, refreshToken: string) => void;
-  logout: () => void;
+  login: (response: LoginResponse) => void;
+  logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
 }
 
@@ -25,46 +26,41 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  /**
-   * Logout user
-   */
-  const logout = useCallback(() => {
-    authService.logout();
+  const clearAuthState = useCallback(() => {
+    authService.clearSession();
     setIsAuthenticated(false);
     setUser(null);
   }, []);
 
-  /**
-   * Check authentication status
-   */
+  const logout = useCallback(async () => {
+    await authService.logout();
+    setIsAuthenticated(false);
+    setUser(null);
+  }, []);
+
   const checkAuth = useCallback(async (): Promise<boolean> => {
     try {
       setIsLoading(true);
 
-      // Check if refresh token exists and is valid
-      if (!authService.isAuthenticated()) {
-        logout();
+      if (!authService.hasValidRefreshToken()) {
+        clearAuthState();
         return false;
       }
 
-      // Try to get a valid access token
       const accessToken = await authService.getValidAccessToken();
-
       if (!accessToken) {
-        logout();
+        clearAuthState();
         return false;
       }
 
-      // Extract user from token
       const userData = extractUserFromToken(accessToken);
-
       if (!userData) {
-        logout();
+        clearAuthState();
         return false;
       }
 
@@ -72,50 +68,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(userData);
       return true;
     } catch (error) {
-      logout();
+      clearAuthState();
       return false;
     } finally {
       setIsLoading(false);
     }
-  }, [logout]);
+  }, [clearAuthState]);
 
-  /**
-   * Login with tokens
-   */
-  const login = (accessToken: string, refreshToken: string) => {
-    // Save tokens
-    authService.saveTokens({ accessToken, refreshToken, user: null });
+  const login = useCallback((response: LoginResponse) => {
+    authService.saveTokens(response.tokens);
+    setIsAuthenticated(true);
+    setUser({
+      id: response.userId,
+      email: response.email,
+    });
+    setIsLoading(false);
+  }, []);
 
-    // Extract user info
-    const userData = extractUserFromToken(accessToken);
-
-    if (userData) {
-      setIsAuthenticated(true);
-      setUser(userData);
-      setIsLoading(false); // Important: Set loading to false after login
-    } else {
-      authService.logout();
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Initialize auth state on mount
-   */
   useEffect(() => {
-    checkAuth();
+    void checkAuth();
   }, [checkAuth]);
 
-  const value: AuthContextType = {
-    isAuthenticated,
-    user,
-    isLoading,
-    login,
-    logout,
-    checkAuth,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        user,
+        isLoading,
+        login,
+        logout,
+        checkAuth,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
