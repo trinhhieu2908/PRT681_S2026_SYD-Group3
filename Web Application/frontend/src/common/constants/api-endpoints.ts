@@ -4,3 +4,7 @@ export const AUTH_API = {
   refreshToken: "/auth/refresh",
   logout: "/auth/logout",
 };
+
+export const JOB_APPLICATION_API = {
+  root: "/job-applications",
+};

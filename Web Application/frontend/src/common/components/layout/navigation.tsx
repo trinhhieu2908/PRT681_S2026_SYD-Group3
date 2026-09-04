@@ -1,5 +1,5 @@
 import { routes } from "@/routes/routes";
-import { LayoutDashboard } from "lucide-react";
+import { BriefcaseBusiness, LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface NavigationProps {
@@ -15,6 +15,12 @@ const Navigation = ({ onNavigate }: NavigationProps) => {
       icon: LayoutDashboard,
       path: routes.homePath,
       active: location.pathname === routes.homePath,
+    },
+    {
+      name: "Job application",
+      icon: BriefcaseBusiness,
+      path: routes.jobApplicationsPath,
+      active: location.pathname.startsWith(routes.jobApplicationsPath),
     },
   ];
 

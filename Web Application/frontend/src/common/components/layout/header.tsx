@@ -1,5 +1,7 @@
 import { Menu, UserRound } from "lucide-react";
 import { useAuth } from "@/modules/auth/contexts/auth.context";
+import { routes } from "@/routes/routes";
+import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
   onOpenSidebar: () => void;
@@ -7,6 +9,10 @@ interface HeaderProps {
 
 const Header = ({ onOpenSidebar }: HeaderProps) => {
   const { user } = useAuth();
+  const location = useLocation();
+  const pageTitle = location.pathname.startsWith(routes.jobApplicationsPath)
+    ? "Job applications"
+    : "Dashboard";
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">
@@ -23,7 +29,7 @@ const Header = ({ onOpenSidebar }: HeaderProps) => {
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary-700">
             JobTrack
           </p>
-          <p className="text-base font-semibold text-gray-950">Dashboard</p>
+          <p className="text-base font-semibold text-gray-950">{pageTitle}</p>
         </div>
       </div>
 

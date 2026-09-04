@@ -6,6 +6,9 @@ import { lazy } from "react";
 
 const LoginRoute = lazy(() => import("@/routes/login-route"));
 const DashboardPage = lazy(() => import("@/pages/dashboard/dashboard-page"));
+const JobApplicationPage = lazy(
+  () => import("@/pages/job-application/job-application-page"),
+);
 const NotFoundPage = lazy(() => import("@/pages/not-found/not-found-page"));
 
 const router = createBrowserRouter([
@@ -24,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: routes.homePath,
         element: <DashboardPage />,
+      },
+      {
+        path: routes.jobApplicationsPath,
+        element: <JobApplicationPage />,
       },
       {
         path: "*",
