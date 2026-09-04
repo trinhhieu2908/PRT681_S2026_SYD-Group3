@@ -102,6 +102,39 @@ Registration passwords must be 8 to 128 characters and contain at least one
 uppercase letter, one lowercase letter, one number, and one special character.
 Email uniqueness is case-insensitive.
 
+## Job Application Endpoints
+
+Both endpoints require a valid JWT access token.
+
+Create a job application:
+
+```http
+POST /api/job-applications
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "companyName": "Example Company",
+  "roleTitle": "Software Developer",
+  "platform": "LinkedIn",
+  "jobLink": "https://example.com/jobs/software-developer",
+  "portfolioLink": "https://example.com/portfolio",
+  "gitHubLink": "https://github.com/example"
+}
+```
+
+The API obtains `UserId` from the access token and sets `ApplicationDate` to
+the current UTC date and `CurrentStatus` to `Applied`.
+
+Get the authenticated user's applications with pagination:
+
+```http
+GET /api/job-applications?pageNumber=1&pageSize=20
+Authorization: Bearer <access-token>
+```
+
+`pageNumber` starts at `1`. `pageSize` must be between `1` and `100`.
+
 ## Create and Apply EF Core Migration
 
 Install the EF CLI if it is not already installed:

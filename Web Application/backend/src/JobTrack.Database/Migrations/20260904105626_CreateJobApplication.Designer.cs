@@ -3,6 +3,7 @@ using System;
 using JobTrack.Database.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobTrack.Database.Migrations
 {
     [DbContext(typeof(JobTrackDbContext))]
-    partial class JobTrackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260904105626_CreateJobApplication")]
+    partial class CreateJobApplication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

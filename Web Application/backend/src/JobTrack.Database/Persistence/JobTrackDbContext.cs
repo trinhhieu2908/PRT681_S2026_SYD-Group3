@@ -1,6 +1,7 @@
 using JobTrack.Core.UnitOfWork;
 using JobTrack.Modules.Users.Entities;
 using Microsoft.EntityFrameworkCore;
+using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
 
 namespace JobTrack.Database.Persistence;
 
@@ -8,6 +9,8 @@ public class JobTrackDbContext(DbContextOptions<JobTrackDbContext> options)
     : DbContext(options), IUnitOfWork
 {
     public DbSet<User> Users => Set<User>();
+
+    public DbSet<JobApplicationEntity> JobApplications => Set<JobApplicationEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

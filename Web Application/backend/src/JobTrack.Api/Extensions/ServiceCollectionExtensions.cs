@@ -1,11 +1,14 @@
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Database.JobApplication;
 using JobTrack.Database.Users;
 using JobTrack.Database.Persistence;
 using JobTrack.Database.Repositories;
 using JobTrack.Modules.Auth.Configuration;
 using JobTrack.Modules.Auth.Services;
+using JobTrack.Modules.JobApplication.Services;
 using JobTrack.Modules.Users.Entities;
 using JobTrack.Modules.Users.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,7 +25,11 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         services.AddCors(options =>
         {
             options.AddPolicy(FrontendCorsPolicy, policy =>
@@ -64,6 +71,7 @@ public static class ServiceCollectionExtensions
         services.AddAuthentication(configuration);
         services.AddAuthorization();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJobApplicationService, JobApplicationService>();
 
         return services;
     }
@@ -126,6 +134,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<JobTrack.Modules.Users.Repositories.IUserRepository, UserRepository>();
+        services.AddScoped<JobTrack.Modules.JobApplication.Repositories.IJobApplicationRepository,
+            JobApplicationRepository>();
         services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
         return services;
