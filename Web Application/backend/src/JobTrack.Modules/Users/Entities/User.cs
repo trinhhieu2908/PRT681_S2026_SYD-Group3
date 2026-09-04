@@ -4,9 +4,9 @@ namespace JobTrack.Modules.Users.Entities;
 
 public sealed class User : BaseEntity
 {
-    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
-    public string NormalizedUsername { get; set; } = string.Empty;
+    public string NormalizedEmail { get; set; } = string.Empty;
 
     public string PasswordHash { get; set; } = string.Empty;
 

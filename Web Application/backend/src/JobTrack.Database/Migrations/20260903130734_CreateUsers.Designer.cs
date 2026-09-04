@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobTrack.Database.Migrations
 {
     [DbContext(typeof(JobTrackDbContext))]
-    [Migration("20260829094915_CreateUsers")]
+    [Migration("20260903130734_CreateUsers")]
     partial class CreateUsers
     {
         /// <inheritdoc />
@@ -34,10 +34,15 @@ namespace JobTrack.Database.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("NormalizedUsername")
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -57,14 +62,9 @@ namespace JobTrack.Database.Migrations
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedUsername")
+                    b.HasIndex("NormalizedEmail")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);

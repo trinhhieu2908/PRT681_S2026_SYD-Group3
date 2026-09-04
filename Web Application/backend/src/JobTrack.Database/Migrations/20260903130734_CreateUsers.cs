@@ -16,8 +16,8 @@ namespace JobTrack.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    NormalizedUsername = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
                     PasswordHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     RefreshTokenHash = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     RefreshTokenCreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -31,9 +31,9 @@ namespace JobTrack.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_NormalizedUsername",
+                name: "IX_users_NormalizedEmail",
                 table: "users",
-                column: "NormalizedUsername",
+                column: "NormalizedEmail",
                 unique: true);
         }
 

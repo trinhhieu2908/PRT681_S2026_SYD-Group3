@@ -89,11 +89,18 @@ The authentication API provides:
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/refresh
+POST /api/auth/logout
 POST /api/auth/revoke
 ```
 
 Access tokens expire after 15 minutes. Refresh tokens expire after 180 days
-and are rotated and stored as hashes in the database.
+and are rotated and stored as hashes in the database. Registration and login
+use an email address and password. The `revoke` endpoint is retained as an
+alias for `logout`.
+
+Registration passwords must be 8 to 128 characters and contain at least one
+uppercase letter, one lowercase letter, one number, and one special character.
+Email uniqueness is case-insensitive.
 
 ## Create and Apply EF Core Migration
 
@@ -141,6 +148,50 @@ dotnet ef migrations script \
   --output migrations.sql
 ```
 
+## Reverse an EF Core Migration
+
+Use this workflow only for a local migration that has not been shared with or
+applied by other team members. Rolling back a migration can drop tables or
+columns and permanently delete their data.
+
+First, list the migrations and identify the migration immediately before the
+one you want to reverse:
+
+```bash
+dotnet ef migrations list \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+Roll the database back to the previous migration. If the migration being
+removed is the first and only migration, use `0` as the target:
+
+```bash
+dotnet ef database update 0 \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+If earlier migrations exist, replace `0` with the name of the previous
+migration instead.
+
+After the database rollback succeeds, remove the latest migration from the
+codebase:
+
+```bash
+dotnet ef migrations remove \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+This removes the migration and designer files and updates the EF Core model
+snapshot. Do not delete these files manually. Run `dotnet ef migrations list`
+again to confirm the migration was removed.
+
+If a migration has already been committed, shared, or applied to another
+environment, keep its history intact and create a new migration that changes
+the schema instead of removing the old migration.
+
 ## Test Endpoint
 
 ```text
@@ -179,4 +230,3 @@ The backend foundation is set up with:
 - Generic repository base
 - Unit of work abstraction
 - Shared common result and exception types
-

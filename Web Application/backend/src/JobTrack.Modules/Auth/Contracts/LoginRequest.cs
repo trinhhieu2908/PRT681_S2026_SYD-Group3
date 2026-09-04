@@ -5,8 +5,11 @@ namespace JobTrack.Modules.Auth.Contracts;
 public sealed record LoginRequest
 {
     [Required]
-    public string Username { get; init; } = string.Empty;
+    [EmailAddress]
+    [MaxLength(254)]
+    public string Email { get; init; } = string.Empty;
 
     [Required]
+    [MaxLength(128)]
     public string Password { get; init; } = string.Empty;
 }

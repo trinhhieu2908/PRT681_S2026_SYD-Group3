@@ -13,12 +13,12 @@ public sealed class UserRepository(JobTrackDbContext dbContext) : IUserRepositor
         return await dbContext.Users.FindAsync([id], cancellationToken);
     }
 
-    public Task<User?> GetByNormalizedUsernameAsync(
-        string normalizedUsername,
+    public Task<User?> GetByNormalizedEmailAsync(
+        string normalizedEmail,
         CancellationToken cancellationToken = default)
     {
         return dbContext.Users.SingleOrDefaultAsync(
-            user => user.NormalizedUsername == normalizedUsername,
+            user => user.NormalizedEmail == normalizedEmail,
             cancellationToken);
     }
 

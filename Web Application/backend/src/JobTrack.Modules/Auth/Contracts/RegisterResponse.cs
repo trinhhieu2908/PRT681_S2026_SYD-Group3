@@ -2,5 +2,5 @@ namespace JobTrack.Modules.Auth.Contracts;
 
 public sealed record RegisterResponse(
     Guid UserId,
-    string Username,
+    string Email,
     TokenResponse Tokens);

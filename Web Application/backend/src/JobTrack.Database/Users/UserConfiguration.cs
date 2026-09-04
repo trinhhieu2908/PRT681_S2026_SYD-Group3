@@ -11,12 +11,12 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
         builder.HasKey(user => user.Id);
 
-        builder.Property(user => user.Username)
-            .HasMaxLength(50)
+        builder.Property(user => user.Email)
+            .HasMaxLength(254)
             .IsRequired();
 
-        builder.Property(user => user.NormalizedUsername)
-            .HasMaxLength(50)
+        builder.Property(user => user.NormalizedEmail)
+            .HasMaxLength(254)
             .IsRequired();
 
         builder.Property(user => user.PasswordHash)
@@ -26,7 +26,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(user => user.RefreshTokenHash)
             .HasMaxLength(128);
 
-        builder.HasIndex(user => user.NormalizedUsername)
+        builder.HasIndex(user => user.NormalizedEmail)
             .IsUnique();
     }
 }

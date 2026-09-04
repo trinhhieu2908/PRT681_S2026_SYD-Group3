@@ -38,8 +38,9 @@ public sealed class AuthenticationController(IAuthService authService) : Control
     }
 
     [Authorize]
+    [HttpPost("logout")]
     [HttpPost("revoke")]
-    public async Task<IActionResult> Revoke(CancellationToken cancellationToken)
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(userIdClaim, out var userId))

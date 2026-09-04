@@ -11,6 +11,7 @@ using JobTrack.Modules.Users.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using EmailAddressAttribute = System.ComponentModel.DataAnnotations.EmailAddressAttribute;
 
 namespace JobTrack.Modules.Auth.Services;
 
@@ -27,49 +28,51 @@ public sealed class AuthService(
         RegisterRequest request,
         CancellationToken cancellationToken = default)
     {
-        var username = request.Username?.Trim() ?? string.Empty;
-        ValidateRegistration(username, request.Password);
+        var email = request.Email?.Trim() ?? string.Empty;
+        ValidateRegistration(email, request.Password);
 
-        var normalizedUsername = NormalizeUsername(username);
-        var existingUser = await userRepository.GetByNormalizedUsernameAsync(
-            normalizedUsername,
+        var normalizedEmail = NormalizeEmail(email);
+        var existingUser = await userRepository.GetByNormalizedEmailAsync(
+            normalizedEmail,
             cancellationToken);
 
         if (existingUser is not null)
         {
-            throw new ValidationException("The username is already registered.");
+            throw new ValidationException("The email address is already registered.");
         }
 
         var user = new User
         {
-            Username = username,
-            NormalizedUsername = normalizedUsername,
+            Email = email,
+            NormalizedEmail = normalizedEmail,
         };
         user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
 
         await userRepository.AddAsync(user, cancellationToken);
         var tokens = await CreateTokensAsync(user, cancellationToken);
 
-        return new RegisterResponse(user.Id, user.Username, tokens);
+        return new RegisterResponse(user.Id, user.Email, tokens);
     }
 
     public async Task<LoginResponse> LoginAsync(
         LoginRequest request,
         CancellationToken cancellationToken = default)
     {
-        var username = request.Username?.Trim() ?? string.Empty;
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(request.Password))
+        var email = request.Email?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(request.Password))
         {
-            throw new ValidationException("Username and password are required.");
+            throw new ValidationException("Email and password are required.");
         }
 
-        var user = await userRepository.GetByNormalizedUsernameAsync(
-            NormalizeUsername(username),
+        ValidateEmail(email);
+
+        var user = await userRepository.GetByNormalizedEmailAsync(
+            NormalizeEmail(email),
             cancellationToken);
 
         if (user is null)
         {
-            throw new UnauthorizedException("Invalid username or password.");
+            throw new UnauthorizedException("Invalid email or password.");
         }
 
         var verificationResult = passwordHasher.VerifyHashedPassword(
@@ -79,7 +82,7 @@ public sealed class AuthService(
 
         if (verificationResult == PasswordVerificationResult.Failed)
         {
-            throw new UnauthorizedException("Invalid username or password.");
+            throw new UnauthorizedException("Invalid email or password.");
         }
 
         if (verificationResult == PasswordVerificationResult.SuccessRehashNeeded)
@@ -88,7 +91,7 @@ public sealed class AuthService(
         }
 
         var tokens = await CreateTokensAsync(user, cancellationToken);
-        return new LoginResponse(user.Id, user.Username, tokens);
+        return new LoginResponse(user.Id, user.Email, tokens);
     }
 
     public async Task<RefreshTokenResponse> RefreshAsync(
@@ -157,7 +160,8 @@ public sealed class AuthService(
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -176,22 +180,62 @@ public sealed class AuthService(
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static void ValidateRegistration(string username, string password)
+    private static void ValidateRegistration(string email, string password)
     {
-        if (username.Length is < 3 or > 50)
+        if (string.IsNullOrWhiteSpace(email))
         {
-            throw new ValidationException("Username must be between 3 and 50 characters.");
+            throw new ValidationException("Email is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(password) || password.Length is < 8 or > 128)
+        ValidateEmail(email);
+
+        if (string.IsNullOrWhiteSpace(password))
         {
-            throw new ValidationException("Password must be between 8 and 128 characters.");
+            throw new ValidationException("Password is required.");
+        }
+
+        if (password.Length < 8)
+        {
+            throw new ValidationException("Password must be at least 8 characters long.");
+        }
+
+        if (password.Length > 128)
+        {
+            throw new ValidationException("Password cannot exceed 128 characters.");
+        }
+
+        if (!password.Any(char.IsUpper))
+        {
+            throw new ValidationException("Password must contain at least one uppercase letter.");
+        }
+
+        if (!password.Any(char.IsLower))
+        {
+            throw new ValidationException("Password must contain at least one lowercase letter.");
+        }
+
+        if (!password.Any(char.IsDigit))
+        {
+            throw new ValidationException("Password must contain at least one number.");
+        }
+
+        if (!password.Any(character => char.IsPunctuation(character) || char.IsSymbol(character)))
+        {
+            throw new ValidationException("Password must contain at least one special character.");
         }
     }
 
-    private static string NormalizeUsername(string username)
+    private static void ValidateEmail(string email)
     {
-        return username.ToUpperInvariant();
+        if (email.Length > 254 || !new EmailAddressAttribute().IsValid(email))
+        {
+            throw new ValidationException("Enter a valid email address.");
+        }
+    }
+
+    private static string NormalizeEmail(string email)
+    {
+        return email.ToUpperInvariant();
     }
 
     private static string GenerateRefreshToken()
