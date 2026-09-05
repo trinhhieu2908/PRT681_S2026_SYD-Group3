@@ -1,15 +1,19 @@
 import React, { ReactNode } from "react";
 
-type MODAL_VIEWS = string;
+export const MODAL_VIEWS = {
+  CREATE_JOB_APPLICATION: "CREATE_JOB_APPLICATION",
+} as const;
+
+export type MODAL_VIEWS = (typeof MODAL_VIEWS)[keyof typeof MODAL_VIEWS];
 
 interface State {
   view?: MODAL_VIEWS;
-  data?: any;
+  data?: unknown;
   isOpen: boolean;
 }
 
 type Action =
-  | { type: "open"; view: MODAL_VIEWS; payload?: any }
+  | { type: "open"; view: MODAL_VIEWS; payload?: unknown }
   | { type: "close" }
   | { type: "toggle"; payload: boolean }
   | { type: "reset" };
@@ -89,7 +93,7 @@ export function useModalAction() {
   }
 
   return {
-    openModal(view: MODAL_VIEWS, payload?: any) {
+    openModal(view: MODAL_VIEWS, payload?: unknown) {
       dispatch({ type: "open", view, payload });
     },
     closeModal() {

@@ -1,19 +1,36 @@
 import axiosClient from "@/clients/axios-client";
 import { AUTH_API } from "@/common/constants/api-endpoints";
-import { LoginRequest } from "@/modules/auth/model/requests";
-import { LoginResponse } from "@/modules/auth/model/responses";
+import { LoginRequest, RegisterRequest } from "@/modules/auth/model/requests";
+import {
+  LoginResponse,
+  RefreshTokenResponse,
+  RegisterResponse,
+} from "@/modules/auth/model/responses";
 
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const body = {
-      username: credentials.username,
-      password: credentials.password,
-      type: "web",
-    };
-    return await axiosClient.post(AUTH_API.login, body);
+    return axiosClient.post<LoginResponse, LoginResponse, LoginRequest>(
+      AUTH_API.login,
+      credentials,
+    );
   },
 
-  refreshToken: async (refreshToken: string): Promise<LoginResponse> => {
-    return await axiosClient.post(AUTH_API.refreshToken, { refreshToken });
+  register: async (credentials: RegisterRequest): Promise<RegisterResponse> => {
+    return axiosClient.post<
+      RegisterResponse,
+      RegisterResponse,
+      RegisterRequest
+    >(AUTH_API.register, credentials);
+  },
+
+  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+    return axiosClient.post<RefreshTokenResponse, RefreshTokenResponse>(
+      AUTH_API.refreshToken,
+      { refreshToken },
+    );
+  },
+
+  logout: async (): Promise<void> => {
+    await axiosClient.post(AUTH_API.logout);
   },
 };

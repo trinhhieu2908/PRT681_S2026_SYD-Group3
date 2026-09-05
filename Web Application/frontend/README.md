@@ -42,15 +42,9 @@ http://localhost:5173
 
 ## Backend API
 
-The frontend defaults to:
+Create a `.env` file in the frontend project root with the following variable to connect to the API:
 
-```text
-http://localhost:5100/api
-```
-
-You can override it with:
-
-```bash
+```dotenv
 VITE_API_BASE_URL=http://localhost:5100/api
 ```
 

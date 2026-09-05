@@ -1,6 +1,39 @@
-import axios from "axios";
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { authService } from "@/modules/auth/services/auth.service";
 import { AUTH_API } from "@/common/constants/api-endpoints";
+
+interface ApiErrorResponse {
+  error?: {
+    message?: string;
+  };
+  message?: string;
+  title?: string;
+}
+
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+const publicAuthEndpoints = [
+  AUTH_API.register,
+  AUTH_API.login,
+  AUTH_API.refreshToken,
+];
+
+const isPublicAuthRequest = (url?: string) =>
+  publicAuthEndpoints.some((endpoint) => url?.includes(endpoint));
+
+const toApiError = (error: AxiosError<ApiErrorResponse>): Error => {
+  const data = error.response?.data;
+  const message =
+    data?.error?.message || data?.message || data?.title || error.message;
+
+  return new Error(message || "Something went wrong. Please try again.");
+};
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5100/api",
@@ -10,41 +43,40 @@ const axiosClient = axios.create({
   timeout: 20000,
 });
 
-// Request interceptor to add access token
 axiosClient.interceptors.request.use(async (config) => {
-  // Skip adding token for auth endpoints
-  if (
-    config.url?.includes(AUTH_API.login) ||
-    config.url?.includes(AUTH_API.refreshToken)
-  ) {
+  if (isPublicAuthRequest(config.url)) {
     return config;
   }
 
-  // Get valid access token (will refresh if needed)
   const accessToken = await authService.getValidAccessToken();
   if (accessToken) {
-    config.headers.authorization = `Bearer ${accessToken}`;
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
   return config;
 });
 
-// Response interceptor to handle token refresh
 axiosClient.interceptors.response.use(
-  async (response) => {
-    // Extract data from response
-    if (response && response.data && response.data.data) {
-      return response.data.data;
-    } else if (response && response.data) {
-      return response.data;
+  (response) => response.data,
+  async (error: AxiosError<ApiErrorResponse>) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined;
+
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isPublicAuthRequest(originalRequest.url)
+    ) {
+      originalRequest._retry = true;
+      const accessToken = await authService.refreshAccessToken();
+
+      if (accessToken) {
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return axiosClient(originalRequest as AxiosRequestConfig);
+      }
     }
-    return response;
-  },
-  (error) => {
-    if (error.response) {
-      throw error.response.data;
-    }
-    throw error;
+
+    return Promise.reject(toApiError(error));
   },
 );
 

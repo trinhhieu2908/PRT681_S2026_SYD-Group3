@@ -1,0 +1,36 @@
+EACH INDIVIDUAL MUST HAVE TO ENTER 6 HOURS TIME LOGGING IN THIS PAGE PER EACH WEEK,,,,
+Week,StudentId,Name,Hours [1-6],Activity details
+Week-1,s394100,Trinh Hieu Tran,1,Research on week 1 - roles and skills. 
+Week-1,s394101,Trinh Hieu Tran,2,Setup github repository
+Week-1,s394102,Trinh Hieu Tran,3,Research about trending technology for web application
+Week-1,s394103,Trinh Hieu Tran,4,Watched tutorial video on using .Net Core API for development
+Week-1,s394104,Trinh Hieu Tran,5,"Install tool for coding: VS Code, Docker"
+Week-1,s394105,Trinh Hieu Tran,6,"Research, install and setup PostgresQL database using Docker"
+,,,,
+Week-2,s394100,Trinh Hieu Tran,1,"Reviewed Week 2 task requirements and identified required tools for Developer and Database Administrator roles, including Jira, GitHub, VS Code, Docker, Visual Studio, Node.js, React, .NET Core, and PostgreSQL"
+Week-2,s394101,Trinh Hieu Tran,2,"Researched Jira for Agile project management, including project boards, backlog, sprint planning, issue types, task assignment, and status tracking."
+Week-2,s394102,Trinh Hieu Tran,3,"Created or explored Jira project setup for the group, reviewed how to create tasks/backlog items, and linked Jira usage to weekly project tracking."
+Week-2,s394103,Trinh Hieu Tran,4,Watched tutorial resources on React and .NET Core API development to understand how the frontend and backend can work together in one project.
+Week-2,s394104,Trinh Hieu Tran,5,Research about Developer and Database Admin role
+Week-2,s394105,Trinh Hieu Tran,6,"Prepared Week 2 evidence for GitHub, including notes on tool research, Jira setup, development environment setup, useful tutorial links, and screenshots where applicable."
+,,,,
+Week-3,s394100,Trinh Hieu Tran,1,"Reviewed proposed project ideas from group members and compared them against the unit requirements, 10-week timeline, local development constraint, and expected final deliverables."
+Week-3,s394101,Trinh Hieu Tran,2,"Analysed the feasibility of TrailMate, the neighbourhood/community project, and JobTrack, considering technical complexity, third-party API dependency, platform requirements, and team skill level."
+Week-3,s394102,Trinh Hieu Tran,3,Participated in group discussion to select the final project topic and agreed to proceed with JobTrack as the most realistic option for the unit scope.
+Week-3,s394103,Trinh Hieu Tran,4,"Drafted the initial JobTrack project concept, including the problem statement, target users, project goal, core features, MVP scope, and out-of-scope items."
+Week-3,s394104,Trinh Hieu Tran,5,"Researched possible JobTrack features and planning items for Sprint 1, including application tracking, status management, interview/follow-up records, and dashboard summaries."
+Week-3,s394105,Trinh Hieu Tran,6,Researched and watched introductory tutorials on React development to prepare for the frontend implementation work planned for Week 4
+,,,,
+Week-4,s394100,Trinh Hieu Tran,1,"Created and organised Sprint 1 user stories in Jira, including project planning, requirements, codebase setup, frontend setup, backend setup, and database preparation work."
+Week-4,s394101,Trinh Hieu Tran,2,Reviewed Jira board structure and adjusted issue types/statuses to make Sprint 1 easier to track for individual team contribution.
+Week-4,s394102,Trinh Hieu Tran,3,Researched and practised React project setup and component structure to prepare for implementing the JobTrack frontend.
+Week-4,s394103,Trinh Hieu Tran,4,Set up the initial React frontend codebase using the selected project template and confirmed the frontend can run locally.
+Week-4,s394104,Trinh Hieu Tran,5,"Set up the initial ASP.NET Core backend solution structure for JobTrack, including API, Features, Database, Core, and Common projects."
+Week-4,s394105,Trinh Hieu Tran,6,"Reviewed backend project structure and planned how EF Core, PostgreSQL connection, repositories, and feature services will be organised for Sprint 1 development."
+,,,,
+Week-5,s394100,Trinh Hieu Tran,1,"Researched JWT authentication concepts, including token generation, claim storage, protected API endpoints, and how JWT supports user-specific access in JobTrack."
+Week-5,s394101,Trinh Hieu Tran,2,"Implemented the user registration API, including request validation, password handling, duplicate email checking, and user record creation."
+Week-5,s394102,Trinh Hieu Tran,3,Implemented the login API with JWT token generation so registered users can authenticate and access protected JobTrack features.
+Week-5,s394103,Trinh Hieu Tran,4,"Built the frontend registration and login UI, connected forms to the backend authentication APIs, and handled basic success/error responses."
+Week-5,s394104,Trinh Hieu Tran,5,Implemented job application backend APIs for creating a new application record and retrieving application records for the logged-in user.
+Week-5,s394105,Trinh Hieu Tran,6,Integrated the frontend create job application form with the backend API and confirmed new applications can be submitted from the UI.

@@ -32,6 +32,10 @@ public sealed class ExceptionHandlingMiddleware(
                 HttpStatusCode.BadRequest,
                 Error.Validation("Request.Validation", exception.Message)),
 
+            UnauthorizedException => (
+                HttpStatusCode.Unauthorized,
+                Error.Failure("Authentication.Unauthorized", exception.Message)),
+
             _ => (
                 HttpStatusCode.InternalServerError,
                 Error.Failure("Server.Error", "An unexpected error occurred."))

@@ -81,6 +81,170 @@ Swagger JSON:
 http://localhost:5100/swagger/v1/swagger.json
 ```
 
+## Authentication Endpoints
+
+The authentication API provides:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+POST /api/auth/revoke
+```
+
+Access tokens expire after 15 minutes. Refresh tokens expire after 180 days
+and are rotated and stored as hashes in the database. Registration and login
+use an email address and password. The `revoke` endpoint is retained as an
+alias for `logout`.
+
+Registration passwords must be 8 to 128 characters and contain at least one
+uppercase letter, one lowercase letter, one number, and one special character.
+Email uniqueness is case-insensitive.
+
+## Job Application Endpoints
+
+Both endpoints require a valid JWT access token.
+
+Create a job application:
+
+```http
+POST /api/job-applications
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "companyName": "Example Company",
+  "roleTitle": "Software Developer",
+  "platform": "LinkedIn",
+  "jobLink": "https://example.com/jobs/software-developer",
+  "portfolioLink": "https://example.com/portfolio",
+  "gitHubLink": "https://github.com/example"
+}
+```
+
+The API obtains `UserId` from the access token and sets `ApplicationDate` to
+the current UTC date and `CurrentStatus` to `Applied`.
+
+Get the authenticated user's applications with optional search, filters, and
+pagination:
+
+```http
+GET /api/job-applications?search=developer&status=Interview&platform=LinkedIn&fromDate=2026-01-01&toDate=2026-12-31&pageNumber=1&pageSize=20
+Authorization: Bearer <access-token>
+```
+
+All query parameters are optional:
+
+- `search` matches company name or role title case-insensitively.
+- `status` accepts a `JobApplicationStatus` value.
+- `platform` matches the complete platform name case-insensitively.
+- `fromDate` and `toDate` filter `ApplicationDate` inclusively.
+- `pageNumber` starts at `1` and defaults to `1`.
+- `pageSize` must be between `1` and `100` and defaults to `20`.
+
+Filters are combined, and `fromDate` cannot be later than `toDate`.
+
+Get one job application by ID:
+
+```http
+GET /api/job-applications/{id}
+Authorization: Bearer <access-token>
+```
+
+The API returns `404 Not Found` when the record does not exist or belongs to a
+different user.
+
+## Create and Apply EF Core Migration
+
+Install the EF CLI if it is not already installed:
+
+```bash
+dotnet tool install --global dotnet-ef --version 10.0.11
+```
+
+```bash
+dotnet ef migrations add CreateUsers \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj \
+  --output-dir Migrations
+```
+
+This creates migration files inside:
+
+```text
+src/JobTrack.Database/Migrations/
+```
+
+Review the generated `CreateUsers.cs`, designer file, and model snapshot.
+Do not execute those files individually.
+
+Make sure the PostgreSQL container is running, then apply the migration:
+
+```bash
+dotnet ef database update \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+The `migrations add` command only creates migration files. The `database update` command executes the migration against PostgreSQL and records it in
+`__EFMigrationsHistory`.
+
+To generate a SQL script for review or deployment instead of applying the
+migration directly:
+
+```bash
+dotnet ef migrations script \
+  --idempotent \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj \
+  --output migrations.sql
+```
+
+## Reverse an EF Core Migration
+
+Use this workflow only for a local migration that has not been shared with or
+applied by other team members. Rolling back a migration can drop tables or
+columns and permanently delete their data.
+
+First, list the migrations and identify the migration immediately before the
+one you want to reverse:
+
+```bash
+dotnet ef migrations list \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+Roll the database back to the previous migration. If the migration being
+removed is the first and only migration, use `0` as the target:
+
+```bash
+dotnet ef database update 0 \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+If earlier migrations exist, replace `0` with the name of the previous
+migration instead.
+
+After the database rollback succeeds, remove the latest migration from the
+codebase:
+
+```bash
+dotnet ef migrations remove \
+  --project src/JobTrack.Database/JobTrack.Database.csproj \
+  --startup-project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+This removes the migration and designer files and updates the EF Core model
+snapshot. Do not delete these files manually. Run `dotnet ef migrations list`
+again to confirm the migration was removed.
+
+If a migration has already been committed, shared, or applied to another
+environment, keep its history intact and create a new migration that changes
+the schema instead of removing the old migration.
+
 ## Test Endpoint
 
 ```text
@@ -115,8 +279,7 @@ The backend foundation is set up with:
 - Swagger UI
 - EF Core with PostgreSQL
 - Docker Compose Postgres database
+- JWT authentication with access and refresh tokens
 - Generic repository base
 - Unit of work abstraction
 - Shared common result and exception types
-
-Feature modules are not implemented yet.

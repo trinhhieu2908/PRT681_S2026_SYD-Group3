@@ -1,12 +1,14 @@
 import logoText from "../../../assets/logo-text.png";
 import logo from "../../../assets/logo.png";
 import LoginForm from "@/modules/auth/components/login-form";
+import RegisterForm from "@/modules/auth/components/register-form";
 import {
   CalendarCheck,
   CheckCircle2,
   ClipboardList,
   MailCheck,
 } from "lucide-react";
+import { useState } from "react";
 
 const currentYear = new Date().getFullYear();
 
@@ -16,7 +18,16 @@ const stages = [
   { label: "Follow up", icon: MailCheck },
 ];
 
-const LoginCard = () => {
+type AuthMode = "login" | "register";
+
+interface LoginCardProps {
+  mode: AuthMode;
+  onModeChange: (mode: AuthMode) => void;
+}
+
+const LoginCard = ({ mode, onModeChange }: LoginCardProps) => {
+  const isLogin = mode === "login";
+
   return (
     <div className="w-full max-w-[448px] rounded-lg border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-slate-950/15 sm:p-8">
       <div className="mb-8">
@@ -26,17 +37,34 @@ const LoginCard = () => {
           className="mb-6 h-14 w-14 object-contain"
         />
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-700">
-          Welcome back
+          {isLogin ? "Welcome back" : "Get started"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-          Sign in to JobTrack
+          {isLogin ? "Sign in to JobTrack" : "Create your account"}
         </h2>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          Continue managing your opportunities.
+          {isLogin
+            ? "Continue managing your opportunities."
+            : "Choose an email and password to join JobTrack."}
         </p>
       </div>
 
-      <LoginForm />
+      {isLogin ? (
+        <LoginForm />
+      ) : (
+        <RegisterForm onRegistered={() => onModeChange("login")} />
+      )}
+
+      <p className="mt-6 text-center text-sm text-slate-600">
+        {isLogin ? "New to JobTrack?" : "Already have an account?"}{" "}
+        <button
+          type="button"
+          onClick={() => onModeChange(isLogin ? "register" : "login")}
+          className="font-semibold text-primary-700 transition hover:text-primary-900 hover:underline"
+        >
+          {isLogin ? "Create an account" : "Sign in"}
+        </button>
+      </p>
 
       <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-6 text-sm text-slate-600">
         <CheckCircle2 className="h-4 w-4 text-primary-600" />
@@ -47,6 +75,8 @@ const LoginCard = () => {
 };
 
 const LoginPage = () => {
+  const [mode, setMode] = useState<AuthMode>("login");
+
   return (
     <div className="relative min-h-screen bg-white text-slate-950">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[52vh] bg-[linear-gradient(90deg,#0f766e_0%,#134e4a_52%,#1e1b4b_100%)] lg:h-1/2" />
@@ -108,7 +138,7 @@ const LoginPage = () => {
         </main>
 
         <aside className="flex min-h-screen items-center justify-center bg-white px-5 py-10 sm:px-8 lg:bg-transparent lg:py-16">
-          <LoginCard />
+          <LoginCard mode={mode} onModeChange={setMode} />
         </aside>
       </div>
     </div>

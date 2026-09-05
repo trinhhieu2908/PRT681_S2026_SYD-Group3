@@ -1,139 +1,106 @@
 import { authApi } from "@/modules/auth/services/api.service";
 import {
+  clearTokens,
   getAccessToken,
   getRefreshToken,
+  getRefreshTokenExpiresAt,
   setAccessToken,
   setRefreshToken,
-  clearTokens,
+  setRefreshTokenExpiresAt,
 } from "@/clients/local-storage";
 import { isTokenExpired } from "@/common/utils/jwt";
-import { LoginResponse } from "@/modules/auth/model/responses";
+import { TokenResponse } from "@/modules/auth/model/responses";
 
 class AuthService {
-  private isRefreshing = false;
-  private failedQueue: Array<{
-    resolve: (token: string) => void;
-    reject: (error: Error) => void;
-  }> = [];
+  private refreshPromise: Promise<string | null> | null = null;
 
-  /**
-   * Check if user is authenticated based on valid refresh token
-   */
-  isAuthenticated(): boolean {
+  hasValidRefreshToken(): boolean {
     const refreshToken = getRefreshToken();
-    if (!refreshToken) return false;
+    if (!refreshToken) {
+      return false;
+    }
 
-    // Check if refresh token is expired
-    return !isTokenExpired(refreshToken);
+    const expiresAt = getRefreshTokenExpiresAt();
+    if (!expiresAt) {
+      // Older stored sessions have no expiry metadata. Let the API validate them.
+      return true;
+    }
+
+    const expiryTime = Date.parse(expiresAt);
+    return !Number.isNaN(expiryTime) && Date.now() < expiryTime;
   }
 
-  /**
-   * Check if access token is valid and not expired
-   */
   isAccessTokenValid(): boolean {
     const accessToken = getAccessToken();
-    if (!accessToken) return false;
-
-    return !isTokenExpired(accessToken);
+    return Boolean(accessToken && !isTokenExpired(accessToken));
   }
 
-  /**
-   * Get valid access token, refresh if needed
-   */
   async getValidAccessToken(): Promise<string | null> {
     const accessToken = getAccessToken();
 
-    // If no access token, try to refresh
-    if (!accessToken) {
-      return await this.refreshAccessToken();
-    }
-
-    // If access token is valid, return it
-    if (!isTokenExpired(accessToken)) {
+    if (accessToken && !isTokenExpired(accessToken)) {
       return accessToken;
     }
 
-    // Access token expired, refresh it
-    return await this.refreshAccessToken();
+    return this.refreshAccessToken();
   }
 
-  /**
-   * Refresh access token using refresh token
-   */
   async refreshAccessToken(): Promise<string | null> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
     const refreshToken = getRefreshToken();
-
-    if (!refreshToken || isTokenExpired(refreshToken)) {
-      this.logout();
+    if (!refreshToken || !this.hasValidRefreshToken()) {
+      this.clearSession();
       return null;
     }
 
-    // If already refreshing, queue the request
-    if (this.isRefreshing) {
-      return new Promise((resolve, reject) => {
-        this.failedQueue.push({ resolve, reject });
+    this.refreshPromise = authApi
+      .refreshToken(refreshToken)
+      .then((response) => {
+        this.saveTokens(response.tokens);
+        return response.tokens.accessToken;
+      })
+      .catch(() => {
+        this.clearSession();
+        this.redirectToLogin();
+        return null;
+      })
+      .finally(() => {
+        this.refreshPromise = null;
       });
-    }
 
-    this.isRefreshing = true;
+    return this.refreshPromise;
+  }
 
+  async logout(): Promise<void> {
     try {
-      const response: LoginResponse = await authApi.refreshToken(refreshToken);
-
-      // Update tokens
-      setAccessToken(response.accessToken);
-
-      // Process queued requests
-      this.processQueue(response.accessToken, null);
-      this.isRefreshing = false;
-
-      return response.accessToken;
-    } catch (error) {
-      // Refresh failed, logout user
-      this.processQueue(null, error as Error);
-      this.isRefreshing = false;
-      this.logout();
-      return null;
-    }
-  }
-
-  /**
-   * Process queued requests after token refresh
-   */
-  private processQueue(token: string | null, error: Error | null) {
-    this.failedQueue.forEach(({ resolve, reject }) => {
-      if (error) {
-        reject(error);
-      } else if (token) {
-        resolve(token);
-      } else {
-        reject(new Error("No token available"));
+      const accessToken = await this.getValidAccessToken();
+      if (accessToken) {
+        await authApi.logout();
       }
-    });
-
-    this.failedQueue = [];
-  }
-
-  /**
-   * Logout user and clear all tokens
-   */
-  logout(): void {
-    clearTokens();
-    this.isRefreshing = false;
-    this.failedQueue = [];
-
-    // Redirect to login if not already there
-    if (window.location.pathname !== "/login") {
-      window.location.href = "/login";
+    } catch (error) {
+      // Local logout must still complete if the API is unavailable.
+    } finally {
+      this.clearSession();
     }
   }
 
-  /**
-   * Save login response tokens
-   */
-  saveTokens(response: LoginResponse): void {
-    setAccessToken(response.accessToken);
-    setRefreshToken(response.refreshToken);
+  clearSession(): void {
+    clearTokens();
+  }
+
+  saveTokens(tokens: TokenResponse): void {
+    setAccessToken(tokens.accessToken);
+    setRefreshToken(tokens.refreshToken);
+    setRefreshTokenExpiresAt(tokens.refreshTokenExpiresAtUtc);
+  }
+
+  private redirectToLogin(): void {
+    if (window.location.pathname !== "/login") {
+      window.location.assign("/login");
+    }
   }
 }
 

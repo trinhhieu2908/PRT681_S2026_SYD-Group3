@@ -21,6 +21,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseCors(ServiceCollectionExtensions.FrontendCorsPolicy);
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -5,7 +5,9 @@ export interface JWTPayload {
   exp: number;
   iat: number;
   sub: string;
-  [key: string]: any;
+  unique_name?: string;
+  email?: string;
+  [key: string]: unknown;
 }
 
 export const decodeToken = (token: string): JWTPayload | null => {
@@ -22,8 +24,8 @@ export const isTokenExpired = (token: string): boolean => {
     if (!payload) return true;
 
     const currentTime = Math.floor(Date.now() / 1000);
-    // Add 30 seconds buffer to refresh before actual expiry
-    return currentTime >= payload.exp;
+    // Refresh shortly before expiry so requests do not race the 15-minute limit.
+    return currentTime >= payload.exp - 30;
   } catch (error) {
     return true;
   }
@@ -48,14 +50,10 @@ export const extractUserFromToken = (
     const payload = decodeToken(accessToken);
     if (!payload) return null;
 
-    return {
-      id: payload.sub,
-      fullName: payload.fullName || "",
-      email: payload.email || "",
-      username: payload.username || "",
-      role: payload.role,
-      isActive: payload.isActive ?? true,
-    };
+    const email = payload.email || payload.unique_name;
+    if (!payload.sub || !email) return null;
+
+    return { id: payload.sub, email };
   } catch (error) {
     return null;
   }

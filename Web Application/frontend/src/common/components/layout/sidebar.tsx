@@ -3,10 +3,15 @@ import { useConfirmation } from "@/common/components/confirmation-modal/confirma
 import Navigation from "@/common/components/layout/navigation";
 import { useAuth } from "@/modules/auth/contexts/auth.context";
 import { routes } from "@/routes/routes";
-import { LogOut } from "lucide-react";
+import { LogOut, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const confirm = useConfirmation();
@@ -24,14 +29,18 @@ const Sidebar = () => {
       return;
     }
 
-    logout();
+    await logout();
     navigate(routes.loginPath);
   };
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col z-30">
+    <aside
+      className={`fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-gray-200 bg-white shadow-sm transition-transform duration-200 lg:translate-x-0 ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
       {/* Logo/Brand */}
-      <div className="px-6 py-6 border-b border-gray-200">
+      <div className="flex items-center justify-between border-b border-gray-200 px-6 py-6">
         <div className="flex items-center gap-3">
           <img src={logo} alt="JobTrack" className="h-10 w-10 object-contain" />
           <div>
@@ -39,10 +48,18 @@ const Sidebar = () => {
             <p className="text-xs text-gray-500">Application manager</p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-gray-950 lg:hidden"
+          aria-label="Close navigation menu"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       {/* Navigation */}
-      <Navigation />
+      <Navigation onNavigate={onClose} />
 
       {/* Logout Button */}
       <div className="border-t border-gray-200"></div>
@@ -58,7 +75,7 @@ const Sidebar = () => {
           <span>Sign Out</span>
         </button>
       </div>
-    </div>
+    </aside>
   );
 };
 

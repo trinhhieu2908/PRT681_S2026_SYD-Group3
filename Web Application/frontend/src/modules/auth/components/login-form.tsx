@@ -5,24 +5,21 @@ import { Button } from "@/common/components/ui/button";
 import { Input } from "@/common/components/ui/input";
 import { useLogin } from "@/modules/auth/hooks/useLogin";
 import { LoginRequest } from "@/modules/auth/model/requests";
-import { ArrowRight, Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { useState } from "react";
 
 // Zod schema for form validation
 const loginSchema = z.object({
-  username: z
+  email: z
     .string()
-    .min(1, { message: "Username is required" })
-    .refine(
-      (username) => {
-        const usernameRegex = /^[a-zA-Z0-9_]+$/;
-        return usernameRegex.test(username);
-      },
-      {
-        message: "Username can only contain letters, numbers, and underscores",
-      },
-    ),
-  password: z.string().min(1, { message: "Password is required" }),
+    .trim()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Enter a valid email address" })
+    .max(254, { message: "Email cannot exceed 254 characters" }),
+  password: z
+    .string()
+    .min(1, { message: "Password is required" })
+    .max(128, { message: "Password cannot exceed 128 characters" }),
 });
 
 const LoginForm = () => {
@@ -35,7 +32,7 @@ const LoginForm = () => {
   } = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -45,31 +42,32 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
       <div className="space-y-2">
         <label
-          htmlFor="username"
+          htmlFor="email"
           className="block text-sm font-semibold text-slate-700"
         >
-          Username
+          Email
         </label>
         <div className="relative">
-          <UserRound className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            id="username"
-            type="text"
-            {...register("username")}
+            id="email"
+            type="email"
+            {...register("email")}
             className={`h-12 pl-11 ${
-              errors.username
+              errors.email
                 ? "border-red-500"
                 : "border-slate-200 bg-slate-50/80 focus-visible:bg-white"
             }`}
-            placeholder="Enter username"
+            placeholder="Enter your email"
             disabled={isLoading}
+            autoComplete="email"
           />
         </div>
-        {errors.username && (
-          <p className="text-sm text-red-600">{errors.username.message}</p>
+        {errors.email && (
+          <p className="text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
 
@@ -93,6 +91,7 @@ const LoginForm = () => {
             }`}
             placeholder="Enter password"
             disabled={isLoading}
+            autoComplete="current-password"
           />
           <button
             type="button"
@@ -111,7 +110,11 @@ const LoginForm = () => {
 
       {loginError && (
         <div className="rounded-lg border border-red-100 bg-red-50 p-4">
-          <p className="text-sm text-red-600">{loginError.message}</p>
+          <p className="text-sm text-red-600">
+            {loginError instanceof Error
+              ? loginError.message
+              : "Unable to sign in. Please try again."}
+          </p>
         </div>
       )}
 
