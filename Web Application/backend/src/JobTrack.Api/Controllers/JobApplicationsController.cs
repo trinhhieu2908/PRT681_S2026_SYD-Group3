@@ -33,8 +33,7 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
 
     [HttpGet]
     public async Task<ActionResult<PagedResult<JobApplicationResponse>>> GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 20,
+        [FromQuery] GetJobApplicationsRequest request,
         CancellationToken cancellationToken = default)
     {
         if (!TryGetUserId(out var userId))
@@ -44,8 +43,7 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
 
         var response = await jobApplicationService.GetAllAsync(
             userId,
-            pageNumber,
-            pageSize,
+            request,
             cancellationToken);
 
         return Ok(response);

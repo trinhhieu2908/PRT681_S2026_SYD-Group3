@@ -17,7 +17,6 @@ public interface IJobApplicationService
 
     Task<PagedResult<JobApplicationResponse>> GetAllAsync(
         Guid userId,
-        int pageNumber,
-        int pageSize,
+        GetJobApplicationsRequest request,
         CancellationToken cancellationToken = default);
 }

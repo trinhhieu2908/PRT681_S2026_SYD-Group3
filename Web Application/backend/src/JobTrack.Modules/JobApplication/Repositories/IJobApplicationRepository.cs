@@ -13,9 +13,7 @@ public interface IJobApplicationRepository
         Guid userId,
         CancellationToken cancellationToken = default);
 
-    Task<(IReadOnlyList<JobApplicationEntity> Items, int TotalCount)> GetPagedByUserIdAsync(
-        Guid userId,
-        int pageNumber,
-        int pageSize,
+    Task<(IReadOnlyList<JobApplicationEntity> Items, int TotalCount)> GetPagedAsync(
+        JobApplicationQuery query,
         CancellationToken cancellationToken = default);
 }

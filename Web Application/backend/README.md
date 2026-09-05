@@ -126,14 +126,24 @@ Authorization: Bearer <access-token>
 The API obtains `UserId` from the access token and sets `ApplicationDate` to
 the current UTC date and `CurrentStatus` to `Applied`.
 
-Get the authenticated user's applications with pagination:
+Get the authenticated user's applications with optional search, filters, and
+pagination:
 
 ```http
-GET /api/job-applications?pageNumber=1&pageSize=20
+GET /api/job-applications?search=developer&status=Interview&platform=LinkedIn&fromDate=2026-01-01&toDate=2026-12-31&pageNumber=1&pageSize=20
 Authorization: Bearer <access-token>
 ```
 
-`pageNumber` starts at `1`. `pageSize` must be between `1` and `100`.
+All query parameters are optional:
+
+- `search` matches company name or role title case-insensitively.
+- `status` accepts a `JobApplicationStatus` value.
+- `platform` matches the complete platform name case-insensitively.
+- `fromDate` and `toDate` filter `ApplicationDate` inclusively.
+- `pageNumber` starts at `1` and defaults to `1`.
+- `pageSize` must be between `1` and `100` and defaults to `20`.
+
+Filters are combined, and `fromDate` cannot be later than `toDate`.
 
 Get one job application by ID:
 
