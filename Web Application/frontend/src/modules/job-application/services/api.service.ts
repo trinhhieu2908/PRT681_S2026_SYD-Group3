@@ -16,15 +16,14 @@ export const jobApplicationApi = {
     );
   },
 
-  getAll: async ({
-    pageNumber,
-    pageSize,
-  }: GetJobApplicationsRequest): Promise<PagedJobApplicationsResponse> => {
+  getAll: async (
+    request: GetJobApplicationsRequest,
+  ): Promise<PagedJobApplicationsResponse> => {
     return axiosClient.get<
       PagedJobApplicationsResponse,
       PagedJobApplicationsResponse
     >(JOB_APPLICATION_API.root, {
-      params: { pageNumber, pageSize },
+      params: request,
     });
   },
 
