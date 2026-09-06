@@ -11,6 +11,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/common/components/ui/button";
 import { formatDate } from "@/common/utils/date";
 import JobApplicationStatusBadge from "@/modules/job-application/components/job-application-status-badge";
+import JobApplicationStatusControl from "@/modules/job-application/components/job-application-status-control";
 import { useJobApplication } from "@/modules/job-application/hooks/useJobApplication";
 import { routes } from "@/routes/routes";
 
@@ -165,8 +166,13 @@ const JobApplicationDetailPage = () => {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <JobApplicationStatusControl
+            application={data}
+            className="lg:col-start-2 lg:row-start-1"
+          />
+
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:col-start-1 lg:row-start-1">
             <h2 className="text-lg font-semibold text-gray-950">
               Application links
             </h2>
@@ -202,26 +208,6 @@ const JobApplicationDetailPage = () => {
               </div>
             )}
           </section>
-
-          <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Current stage
-            </p>
-            <div className="mt-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-              <BriefcaseBusiness size={22} />
-            </div>
-            <p className="mt-4 text-xl font-semibold text-gray-950">
-              {data.currentStatus}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-gray-600">
-              This is the latest status recorded for your application.
-            </p>
-            {data.updatedAtUtc && (
-              <p className="mt-5 border-t border-gray-100 pt-4 text-xs text-gray-500">
-                Last updated {formatDate(data.updatedAtUtc, "datetime")}
-              </p>
-            )}
-          </aside>
         </div>
       </div>
     </div>

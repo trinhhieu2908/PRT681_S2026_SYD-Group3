@@ -19,6 +19,11 @@ export interface GetJobApplicationsRequest {
   toDate?: string;
 }
 
+export interface UpdateJobApplicationStatusRequest {
+  newStatus: JobApplicationStatus;
+  skipToOffer: boolean;
+}
+
 export type JobApplicationFilters = Pick<
   GetJobApplicationsRequest,
   "status" | "platform" | "fromDate" | "toDate"
