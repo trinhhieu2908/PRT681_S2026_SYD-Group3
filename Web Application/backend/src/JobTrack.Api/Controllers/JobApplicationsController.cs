@@ -67,6 +67,44 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
         return Ok(response);
     }
 
+    [HttpPatch("{id:guid}/status")]
+    public async Task<ActionResult<JobApplicationResponse>> UpdateStatus(
+        Guid id,
+        UpdateJobApplicationStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await jobApplicationService.UpdateStatusAsync(
+            id,
+            userId,
+            request,
+            cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPost("{id:guid}/unarchive")]
+    public async Task<ActionResult<JobApplicationResponse>> Unarchive(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await jobApplicationService.UnarchiveAsync(
+            id,
+            userId,
+            cancellationToken);
+
+        return Ok(response);
+    }
+
     private bool TryGetUserId(out Guid userId)
     {
         return Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
