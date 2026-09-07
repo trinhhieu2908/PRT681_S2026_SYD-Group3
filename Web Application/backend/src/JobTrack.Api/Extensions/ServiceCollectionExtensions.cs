@@ -28,7 +28,8 @@ public static class ServiceCollectionExtensions
         services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(allowIntegerValues: false));
             });
         services.AddCors(options =>
         {
@@ -136,6 +137,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<JobTrack.Modules.Users.Repositories.IUserRepository, UserRepository>();
         services.AddScoped<JobTrack.Modules.JobApplication.Repositories.IJobApplicationRepository,
             JobApplicationRepository>();
+        services.AddScoped<
+            JobTrack.Modules.JobApplication.Repositories.IJobApplicationStatusHistoryRepository,
+            JobApplicationStatusHistoryRepository>();
         services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
         return services;

@@ -14,11 +14,14 @@ import {
 } from "@/common/components/modal/modal-context";
 import { Button } from "@/common/components/ui/button";
 import { Spinner } from "@/common/components/ui/spinner";
+import { useDebouncedValue } from "@/common/hooks/use-debounced-value";
 import JobApplicationCard from "@/modules/job-application/components/job-application-card";
+import JobApplicationFilterBar from "@/modules/job-application/components/job-application-filter-bar";
 import {
   DEFAULT_JOB_APPLICATION_PAGE_SIZE,
   useJobApplications,
 } from "@/modules/job-application/hooks/useJobApplications";
+import { JobApplicationFilters } from "@/modules/job-application/model/requests";
 
 const LoadingJourney = () => {
   return (
@@ -49,17 +52,41 @@ const LoadingJourney = () => {
 
 const JobApplicationPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState<JobApplicationFilters>({});
+  const debouncedSearchTerm = useDebouncedValue(searchTerm);
   const { openModal } = useModalAction();
-  const { data, isPending, isFetching, error, refetch } = useJobApplications(
+  const { data, isPending, isFetching, error, refetch } = useJobApplications({
     pageNumber,
-    DEFAULT_JOB_APPLICATION_PAGE_SIZE,
-  );
+    pageSize: DEFAULT_JOB_APPLICATION_PAGE_SIZE,
+    search: debouncedSearchTerm.trim() || undefined,
+    ...filters,
+  });
 
   const totalCount = data?.totalCount ?? 0;
   const totalPages = data?.totalPages ?? 0;
   const pageSize = data?.pageSize ?? DEFAULT_JOB_APPLICATION_PAGE_SIZE;
   const rangeStart = totalCount === 0 ? 0 : (pageNumber - 1) * pageSize + 1;
   const rangeEnd = Math.min(pageNumber * pageSize, totalCount);
+  const hasSearchOrFilters = Boolean(
+    debouncedSearchTerm.trim() || Object.values(filters).some(Boolean),
+  );
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setPageNumber(1);
+  };
+
+  const handleApplyFilters = (nextFilters: JobApplicationFilters) => {
+    setFilters(nextFilters);
+    setPageNumber(1);
+  };
+
+  const handleClearAll = () => {
+    setSearchTerm("");
+    setFilters({});
+    setPageNumber(1);
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -95,7 +122,15 @@ const JobApplicationPage = () => {
           </div>
         </section>
 
-        <section className="mt-9">
+        <JobApplicationFilterBar
+          searchTerm={searchTerm}
+          filters={filters}
+          onSearchChange={handleSearchChange}
+          onApplyFilters={handleApplyFilters}
+          onClearAll={handleClearAll}
+        />
+
+        <section className="mt-8">
           <div className="flex min-h-12 items-end justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-700">
@@ -137,6 +172,27 @@ const JobApplicationPage = () => {
                 >
                   <RefreshCw />
                   Try again
+                </Button>
+              </div>
+            ) : data.items.length === 0 && hasSearchOrFilters ? (
+              <div className="relative flex min-h-72 flex-col items-center justify-center overflow-hidden rounded-[1.75rem] border border-dashed border-gray-300 bg-white px-6 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 text-gray-600">
+                  <BriefcaseBusiness size={27} />
+                </div>
+                <p className="mt-5 text-lg font-semibold text-gray-950">
+                  No opportunities match
+                </p>
+                <p className="mt-2 max-w-md text-sm leading-6 text-gray-600">
+                  Try a different company or role, or loosen your filters to see
+                  more of your application trail.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-6 rounded-full px-5"
+                  onClick={handleClearAll}
+                >
+                  Clear search and filters
                 </Button>
               </div>
             ) : data.items.length === 0 ? (

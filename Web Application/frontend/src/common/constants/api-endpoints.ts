@@ -7,4 +7,6 @@ export const AUTH_API = {
 
 export const JOB_APPLICATION_API = {
   root: "/job-applications",
+  status: (id: string) => `/job-applications/${id}/status`,
+  unarchive: (id: string) => `/job-applications/${id}/unarchive`,
 };

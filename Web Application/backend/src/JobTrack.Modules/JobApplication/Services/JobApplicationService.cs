@@ -2,6 +2,7 @@ using JobTrack.Common.Exceptions;
 using JobTrack.Common.Pagination;
 using JobTrack.Core.UnitOfWork;
 using JobTrack.Modules.JobApplication.Contracts;
+using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.JobApplication.Enums;
 using JobTrack.Modules.JobApplication.Repositories;
 using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
@@ -10,6 +11,7 @@ namespace JobTrack.Modules.JobApplication.Services;
 
 public sealed class JobApplicationService(
     IJobApplicationRepository jobApplicationRepository,
+    IJobApplicationStatusHistoryRepository statusHistoryRepository,
     IUnitOfWork unitOfWork)
     : IJobApplicationService
 {
@@ -111,6 +113,95 @@ public sealed class JobApplicationService(
             request.PageNumber,
             request.PageSize,
             totalCount);
+    }
+
+    public async Task<JobApplicationResponse> UpdateStatusAsync(
+        Guid id,
+        Guid userId,
+        UpdateJobApplicationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var newStatus = request.NewStatus
+            ?? throw new ValidationException("New status is required.");
+
+        if (!Enum.IsDefined(newStatus))
+        {
+            throw new ValidationException("Status is not supported.");
+        }
+
+        var jobApplication = await GetForUpdateAsync(id, userId, cancellationToken);
+
+        JobApplicationStatusWorkflow.ValidateTransition(
+            jobApplication.CurrentStatus,
+            newStatus,
+            request.SkipToOffer);
+
+        await ApplyStatusChangeAsync(jobApplication, newStatus, cancellationToken);
+
+        return MapResponse(jobApplication);
+    }
+
+    public async Task<JobApplicationResponse> UnarchiveAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var jobApplication = await GetForUpdateAsync(id, userId, cancellationToken);
+
+        if (jobApplication.CurrentStatus != JobApplicationStatus.Archived)
+        {
+            throw new ValidationException("Only an archived application can be unarchived.");
+        }
+
+        var archiveEntry = await statusHistoryRepository.GetLatestArchiveEntryAsync(
+            jobApplication.Id,
+            cancellationToken)
+            ?? throw new ValidationException(
+                "The application cannot be unarchived because its previous status is unavailable.");
+
+        if (archiveEntry.OldStatus == JobApplicationStatus.Archived
+            || !Enum.IsDefined(archiveEntry.OldStatus))
+        {
+            throw new ValidationException(
+                "The application cannot be unarchived because its previous status is invalid.");
+        }
+
+        await ApplyStatusChangeAsync(
+            jobApplication,
+            archiveEntry.OldStatus,
+            cancellationToken);
+
+        return MapResponse(jobApplication);
+    }
+
+    private async Task<JobApplicationEntity> GetForUpdateAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await jobApplicationRepository.GetForUpdateAsync(id, userId, cancellationToken)
+            ?? throw new NotFoundException("Job application was not found.");
+    }
+
+    private async Task ApplyStatusChangeAsync(
+        JobApplicationEntity jobApplication,
+        JobApplicationStatus newStatus,
+        CancellationToken cancellationToken)
+    {
+        var now = DateTime.UtcNow;
+        var statusHistory = new JobApplicationStatusHistory
+        {
+            JobApplicationId = jobApplication.Id,
+            OldStatus = jobApplication.CurrentStatus,
+            NewStatus = newStatus,
+            CreatedAtUtc = now,
+        };
+
+        jobApplication.CurrentStatus = newStatus;
+        jobApplication.UpdatedAtUtc = now;
+
+        await statusHistoryRepository.AddAsync(statusHistory, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     private static string ValidateRequired(string value, int maximumLength, string fieldName)

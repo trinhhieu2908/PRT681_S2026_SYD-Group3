@@ -1,4 +1,5 @@
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
@@ -11,6 +12,9 @@ public class JobTrackDbContext(DbContextOptions<JobTrackDbContext> options)
     public DbSet<User> Users => Set<User>();
 
     public DbSet<JobApplicationEntity> JobApplications => Set<JobApplicationEntity>();
+
+    public DbSet<JobApplicationStatusHistory> JobApplicationStatusHistories =>
+        Set<JobApplicationStatusHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

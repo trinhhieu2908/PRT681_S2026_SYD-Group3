@@ -1,3 +1,5 @@
+import type { JobApplicationStatus } from "@/modules/job-application/model/responses";
+
 export interface CreateJobApplicationRequest {
   companyName: string;
   roleTitle: string;
@@ -10,4 +12,19 @@ export interface CreateJobApplicationRequest {
 export interface GetJobApplicationsRequest {
   pageNumber: number;
   pageSize: number;
+  search?: string;
+  status?: JobApplicationStatus;
+  platform?: string;
+  fromDate?: string;
+  toDate?: string;
 }
+
+export interface UpdateJobApplicationStatusRequest {
+  newStatus: JobApplicationStatus;
+  skipToOffer: boolean;
+}
+
+export type JobApplicationFilters = Pick<
+  GetJobApplicationsRequest,
+  "status" | "platform" | "fromDate" | "toDate"
+>;
