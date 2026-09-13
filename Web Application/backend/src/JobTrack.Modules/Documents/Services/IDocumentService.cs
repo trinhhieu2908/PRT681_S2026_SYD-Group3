@@ -4,6 +4,10 @@ namespace JobTrack.Modules.Documents.Services;
 
 public interface IDocumentService
 {
+    Task<IReadOnlyList<ResumeResponse>> GetResumesAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<ResumeResponse> SaveResumeAsync(
         Guid userId,
         SaveResumeRequest request,

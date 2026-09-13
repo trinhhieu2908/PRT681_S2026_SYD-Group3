@@ -16,6 +16,19 @@ public sealed class DocumentService(
     IUnitOfWork unitOfWork)
     : IDocumentService
 {
+    public async Task<IReadOnlyList<ResumeResponse>> GetResumesAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var resumes = await resumeRepository.GetAllByUserIdAsync(
+            userId,
+            cancellationToken);
+
+        return resumes
+            .Select(MapResumeResponse)
+            .ToArray();
+    }
+
     public async Task<ResumeResponse> SaveResumeAsync(
         Guid userId,
         SaveResumeRequest request,

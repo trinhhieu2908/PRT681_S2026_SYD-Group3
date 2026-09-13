@@ -11,12 +11,28 @@ namespace JobTrack.Api.Controllers;
 [Route("api/resumes")]
 public sealed class ResumesController(IDocumentService documentService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<ResumeResponse>>> GetAll(
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await documentService.GetResumesAsync(
+            userId,
+            cancellationToken);
+
+        return Ok(response);
+    }
+
     [HttpPost]
     public async Task<ActionResult<ResumeResponse>> Save(
         SaveResumeRequest request,
         CancellationToken cancellationToken)
     {
-        if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        if (!TryGetUserId(out var userId))
         {
             return Unauthorized();
         }
@@ -27,5 +43,10 @@ public sealed class ResumesController(IDocumentService documentService) : Contro
             cancellationToken);
 
         return StatusCode(StatusCodes.Status201Created, response);
+    }
+
+    private bool TryGetUserId(out Guid userId)
+    {
+        return Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
     }
 }
