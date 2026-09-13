@@ -10,6 +10,11 @@ public interface IResumeRepository
         Guid userId,
         CancellationToken cancellationToken = default);
 
+    Task<Resume?> GetByIdAndUserIdAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<bool> ExistsByFileNameAsync(
         Guid userId,
         string fileName,

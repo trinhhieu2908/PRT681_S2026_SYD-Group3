@@ -155,6 +155,28 @@ Authorization: Bearer <access-token>
 The API returns `404 Not Found` when the record does not exist or belongs to a
 different user.
 
+Update an owned job application's editable fields:
+
+```http
+PUT /api/job-applications/{id}
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "companyName": "Example Company",
+  "roleTitle": "Senior Software Developer",
+  "platform": "LinkedIn",
+  "applicationDate": "2026-09-13",
+  "jobLink": "https://example.com/jobs/senior-software-developer",
+  "portfolioLink": "https://example.com/portfolio",
+  "gitHubLink": "https://github.com/example"
+}
+```
+
+This is a full update of the editable fields. Optional links can be set to
+`null` to clear them. Status and attached documents are changed through their
+dedicated endpoints.
+
 ## S3 Document Upload URLs
 
 S3 credentials are stored with .NET User Secrets for local development and are
@@ -233,6 +255,29 @@ Authorization: Bearer <access-token>
 The resume save endpoint checks exact filename uniqueness again. It returns
 `409 Conflict` when the version already exists and `404 Not Found` when the job
 application does not exist or belongs to another user.
+
+List the authenticated user's saved resume versions:
+
+```http
+GET /api/resumes
+Authorization: Bearer <access-token>
+```
+
+Attach one of those existing resumes to an owned job application:
+
+```http
+PUT /api/job-applications/{jobApplicationId}/resume
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "resumeId": "<existing-resume-id>"
+}
+```
+
+The API returns `404 Not Found` when either the application or resume does not
+exist for the authenticated user. Attaching a resume replaces the application's
+previous resume selection; the reusable resume record itself is unchanged.
 
 After a cover-letter upload succeeds, create or replace the one cover letter
 associated with an owned job application:

@@ -13,6 +13,12 @@ public interface IDocumentService
         SaveResumeRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<ResumeResponse> AttachResumeAsync(
+        Guid userId,
+        Guid jobApplicationId,
+        AttachResumeRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<CoverLetterResponse> SaveCoverLetterAsync(
         Guid userId,
         Guid jobApplicationId,

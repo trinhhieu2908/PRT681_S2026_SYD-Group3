@@ -20,6 +20,12 @@ public interface IJobApplicationService
         GetJobApplicationsRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<JobApplicationResponse> UpdateAsync(
+        Guid id,
+        Guid userId,
+        UpdateJobApplicationRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<JobApplicationResponse> UpdateStatusAsync(
         Guid id,
         Guid userId,

@@ -24,6 +24,18 @@ public sealed class ResumeRepository(JobTrackDbContext dbContext) : IResumeRepos
             .ToListAsync(cancellationToken);
     }
 
+    public Task<Resume?> GetByIdAndUserIdAsync(
+        Guid id,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return dbContext.Resumes
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                resume => resume.Id == id && resume.UserId == userId,
+                cancellationToken);
+    }
+
     public Task<bool> ExistsByFileNameAsync(
         Guid userId,
         string fileName,

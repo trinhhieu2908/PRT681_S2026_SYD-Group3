@@ -80,6 +80,37 @@ public sealed class DocumentService(
         return MapResumeResponse(resume);
     }
 
+    public async Task<ResumeResponse> AttachResumeAsync(
+        Guid userId,
+        Guid jobApplicationId,
+        AttachResumeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (request.ResumeId == Guid.Empty)
+        {
+            throw new ValidationException("Resume ID is required.");
+        }
+
+        var jobApplication = await jobApplicationRepository.GetForUpdateAsync(
+            jobApplicationId,
+            userId,
+            cancellationToken)
+            ?? throw new NotFoundException("Job application was not found.");
+
+        var resume = await resumeRepository.GetByIdAndUserIdAsync(
+            request.ResumeId,
+            userId,
+            cancellationToken)
+            ?? throw new NotFoundException("Resume was not found.");
+
+        jobApplication.ResumeId = resume.Id;
+        jobApplication.UpdatedAtUtc = DateTime.UtcNow;
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return MapResumeResponse(resume);
+    }
+
     public async Task<CoverLetterResponse> SaveCoverLetterAsync(
         Guid userId,
         Guid jobApplicationId,

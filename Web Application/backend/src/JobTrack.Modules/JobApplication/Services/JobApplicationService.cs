@@ -116,6 +116,34 @@ public sealed class JobApplicationService(
             totalCount);
     }
 
+    public async Task<JobApplicationResponse> UpdateAsync(
+        Guid id,
+        Guid userId,
+        UpdateJobApplicationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var applicationDate = request.ApplicationDate
+            ?? throw new ValidationException("Application date is required.");
+
+        var jobApplication = await GetForUpdateAsync(id, userId, cancellationToken);
+
+        jobApplication.CompanyName = ValidateRequired(
+            request.CompanyName,
+            150,
+            "Company name");
+        jobApplication.RoleTitle = ValidateRequired(request.RoleTitle, 150, "Role title");
+        jobApplication.Platform = ValidateRequired(request.Platform, 50, "Platform");
+        jobApplication.ApplicationDate = applicationDate;
+        jobApplication.JobLink = NormalizeOptional(request.JobLink);
+        jobApplication.PortfolioLink = NormalizeOptional(request.PortfolioLink);
+        jobApplication.GitHubLink = NormalizeOptional(request.GitHubLink);
+        jobApplication.UpdatedAtUtc = DateTime.UtcNow;
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return MapResponse(jobApplication);
+    }
+
     public async Task<JobApplicationResponse> UpdateStatusAsync(
         Guid id,
         Guid userId,
