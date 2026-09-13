@@ -10,7 +10,7 @@ public interface IJobApplicationService
         CreateJobApplicationRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<JobApplicationResponse> GetByIdAsync(
+    Task<JobApplicationDetailResponse> GetByIdAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default);

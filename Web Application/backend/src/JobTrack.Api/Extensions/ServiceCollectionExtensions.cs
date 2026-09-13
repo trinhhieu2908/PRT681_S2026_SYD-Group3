@@ -5,12 +5,15 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Database.Documents;
 using JobTrack.Database.JobApplication;
 using JobTrack.Database.Users;
 using JobTrack.Database.Persistence;
 using JobTrack.Database.Repositories;
 using JobTrack.Modules.Auth.Configuration;
 using JobTrack.Modules.Auth.Services;
+using JobTrack.Modules.Documents.Repositories;
+using JobTrack.Modules.Documents.Services;
 using JobTrack.Modules.JobApplication.Services;
 using JobTrack.Modules.Storage.Configuration;
 using JobTrack.Modules.Storage.Services;
@@ -79,6 +82,7 @@ public static class ServiceCollectionExtensions
         services.AddStorage(configuration);
         services.AddAuthorization();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDocumentService, DocumentService>();
         services.AddScoped<IJobApplicationService, JobApplicationService>();
 
         return services;
@@ -175,6 +179,8 @@ public static class ServiceCollectionExtensions
             serviceProvider.GetRequiredService<JobTrackDbContext>());
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IResumeRepository, ResumeRepository>();
+        services.AddScoped<ICoverLetterRepository, CoverLetterRepository>();
         services.AddScoped<JobTrack.Modules.Users.Repositories.IUserRepository, UserRepository>();
         services.AddScoped<JobTrack.Modules.JobApplication.Repositories.IJobApplicationRepository,
             JobApplicationRepository>();

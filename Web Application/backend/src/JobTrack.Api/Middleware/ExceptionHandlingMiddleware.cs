@@ -1,6 +1,8 @@
 using System.Net;
 using JobTrack.Common.Exceptions;
 using JobTrack.Common.Results;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace JobTrack.Api.Middleware;
 
@@ -32,6 +34,25 @@ public sealed class ExceptionHandlingMiddleware(
                 HttpStatusCode.BadRequest,
                 Error.Validation("Request.Validation", exception.Message)),
 
+            ConflictException => (
+                HttpStatusCode.Conflict,
+                Error.Conflict("Resource.Conflict", exception.Message)),
+
+            DbUpdateException dbUpdateException
+                when IsResumeUniqueConstraintViolation(dbUpdateException) => (
+                    HttpStatusCode.Conflict,
+                    Error.Conflict(
+                        "Resume.VersionConflict",
+                        "A resume version with this filename already exists. "
+                        + "Change the filename or select the existing version.")),
+
+            DbUpdateException dbUpdateException
+                when IsUniqueConstraintViolation(dbUpdateException) => (
+                    HttpStatusCode.Conflict,
+                    Error.Conflict(
+                        "Resource.Conflict",
+                        "A record with the same unique value already exists.")),
+
             UnauthorizedException => (
                 HttpStatusCode.Unauthorized,
                 Error.Failure("Authentication.Unauthorized", exception.Message)),
@@ -50,5 +71,22 @@ public sealed class ExceptionHandlingMiddleware(
         context.Response.ContentType = "application/json";
 
         await context.Response.WriteAsJsonAsync(Result.Failure(error));
+    }
+
+    private static bool IsResumeUniqueConstraintViolation(DbUpdateException exception)
+    {
+        return exception.InnerException is PostgresException
+        {
+            SqlState: PostgresErrorCodes.UniqueViolation,
+            ConstraintName: "UX_resume_UserId_FileName" or "UX_resume_ObjectKey",
+        };
+    }
+
+    private static bool IsUniqueConstraintViolation(DbUpdateException exception)
+    {
+        return exception.InnerException is PostgresException
+        {
+            SqlState: PostgresErrorCodes.UniqueViolation,
+        };
     }
 }

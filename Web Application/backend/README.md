@@ -201,13 +201,57 @@ and 10 PDF, DOC, or DOCX filenames. The authenticated user ID is taken from the
 JWT and used to create keys such as:
 
 ```text
-{userId}/resume/{uniqueId}-resume-v1.pdf
-{userId}/cover-letter/{uniqueId}-cover-letter-v1.pdf
+{userId}/resume/resume-v1.pdf
+{userId}/cover-letter/cover-letter-v1_A7kP2xM9Qz.pdf
 ```
+
+Resume filenames are case-sensitive and unique per user. For example, `cv.pdf`
+and `CV.pdf` are different versions. The presign endpoint returns `409 Conflict`
+when the same user already has the exact resume filename. Cover-letter keys
+always receive a new cryptographically generated 10-character suffix.
 
 Upload each file directly to its `uploadUrl` with the returned `httpMethod` and
 `Content-Type`. Keep the returned `objectKey`; the later document-record API
 will store that key rather than the temporary URL.
+
+After a resume upload succeeds, create its database record and attach it to an
+owned job application in the same transaction:
+
+```http
+POST /api/resumes
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "jobApplicationId": "<job-application-id>",
+  "fileName": "resume-v1.pdf",
+  "objectKey": "<object-key-from-presign-response>",
+  "contentType": "application/pdf"
+}
+```
+
+The resume save endpoint checks exact filename uniqueness again. It returns
+`409 Conflict` when the version already exists and `404 Not Found` when the job
+application does not exist or belongs to another user.
+
+After a cover-letter upload succeeds, create or replace the one cover letter
+associated with an owned job application:
+
+```http
+PUT /api/job-applications/{jobApplicationId}/cover-letter
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "fileName": "cover-letter-v1.pdf",
+  "objectKey": "<object-key-from-presign-response>",
+  "contentType": "application/pdf"
+}
+```
+
+The application detail endpoint returns `resume: null` or `coverLetter: null`
+when a document is not recorded. Otherwise, it returns the saved document
+metadata. The UI can display a null value as `Not recorded`.
 
 The S3 bucket must allow browser `PUT` requests from the frontend origin. A
 development CORS rule can use:

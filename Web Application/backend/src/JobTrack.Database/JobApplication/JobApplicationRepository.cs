@@ -22,6 +22,8 @@ public sealed class JobApplicationRepository(JobTrackDbContext dbContext)
     {
         return dbContext.JobApplications
             .AsNoTracking()
+            .Include(jobApplication => jobApplication.Resume)
+            .Include(jobApplication => jobApplication.CoverLetter)
             .SingleOrDefaultAsync(
                 jobApplication => jobApplication.Id == id && jobApplication.UserId == userId,
                 cancellationToken);

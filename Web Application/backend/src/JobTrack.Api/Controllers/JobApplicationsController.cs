@@ -50,7 +50,7 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobApplicationResponse>> GetById(
+    public async Task<ActionResult<JobApplicationDetailResponse>> GetById(
         Guid id,
         CancellationToken cancellationToken)
     {

@@ -1,6 +1,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using JobTrack.Common.Exceptions;
+using JobTrack.Modules.Documents.Repositories;
 using JobTrack.Modules.Storage.Configuration;
 using JobTrack.Modules.Storage.Contracts;
 using JobTrack.Modules.Storage.Enums;
@@ -10,20 +11,11 @@ namespace JobTrack.Modules.Storage.Services;
 
 public sealed class S3StorageService(
     IAmazonS3 s3Client,
+    IResumeRepository resumeRepository,
     IOptions<S3StorageOptions> options)
     : IStorageService
 {
     private const int MaximumFilesPerRequest = 10;
-    private const int MaximumFileNameLength = 255;
-
-    private static readonly IReadOnlyDictionary<string, string> AllowedContentTypes =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            [".pdf"] = "application/pdf",
-            [".doc"] = "application/msword",
-            [".docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        };
-
     private readonly S3StorageOptions _options = options.Value;
 
     public async Task<GenerateUploadPresignedUrlsResponse> GenerateUploadPresignedUrlsAsync(
@@ -43,16 +35,27 @@ public sealed class S3StorageService(
                 $"File names must contain between 1 and {MaximumFilesPerRequest} items.");
         }
 
-        var expiresAtUtc = DateTime.UtcNow.AddMinutes(_options.UploadUrlExpiryMinutes);
-        var uploads = new List<UploadPresignedUrlResponse>(request.FileNames.Count);
+        var files = request.FileNames
+            .Select(fileName => StorageFileRules.ValidateFileName(fileName))
+            .ToArray();
 
-        foreach (var requestedFileName in request.FileNames)
+        if (request.Context.Value == StorageContext.Resume)
+        {
+            await ValidateResumeFileNamesAsync(userId, files, cancellationToken);
+        }
+
+        var expiresAtUtc = DateTime.UtcNow.AddMinutes(_options.UploadUrlExpiryMinutes);
+        var uploads = new List<UploadPresignedUrlResponse>(files.Length);
+
+        foreach (var fileName in files)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var fileName = ValidateFileName(requestedFileName);
-            var contentType = AllowedContentTypes[Path.GetExtension(fileName)];
-            var objectKey = BuildObjectKey(userId, request.Context.Value, fileName);
+            var contentType = StorageFileRules.GetContentType(fileName);
+            var objectKey = StorageFileRules.BuildObjectKey(
+                userId,
+                request.Context.Value,
+                fileName);
             var uploadUrl = await s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest
             {
                 BucketName = _options.BucketName,
@@ -75,48 +78,37 @@ public sealed class S3StorageService(
         return new GenerateUploadPresignedUrlsResponse(uploads);
     }
 
-    private static string ValidateFileName(string? requestedFileName)
+    private async Task ValidateResumeFileNamesAsync(
+        Guid userId,
+        IReadOnlyCollection<string> fileNames,
+        CancellationToken cancellationToken)
     {
-        var fileName = requestedFileName?.Trim() ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(fileName))
+        var uniqueFileNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var fileName in fileNames)
         {
-            throw new ValidationException("File name cannot be empty.");
+            if (!uniqueFileNames.Add(fileName))
+            {
+                throw CreateResumeConflict(fileName);
+            }
         }
 
-        if (fileName.Length > MaximumFileNameLength)
-        {
-            throw new ValidationException(
-                $"File name cannot exceed {MaximumFileNameLength} characters.");
-        }
+        var existingFileNames = await resumeRepository.GetExistingFileNamesAsync(
+            userId,
+            fileNames,
+            cancellationToken);
+        var existingFileNameSet = existingFileNames.ToHashSet(StringComparer.Ordinal);
+        var firstConflict = fileNames.FirstOrDefault(existingFileNameSet.Contains);
 
-        if (fileName.Contains('/')
-            || fileName.Contains('\\')
-            || fileName.Any(char.IsControl))
+        if (firstConflict is not null)
         {
-            throw new ValidationException("File name contains invalid characters.");
+            throw CreateResumeConflict(firstConflict);
         }
-
-        if (!AllowedContentTypes.ContainsKey(Path.GetExtension(fileName)))
-        {
-            throw new ValidationException("Only PDF, DOC, and DOCX files are supported.");
-        }
-
-        return fileName;
     }
 
-    private static string BuildObjectKey(
-        Guid userId,
-        StorageContext context,
-        string fileName)
+    private static ConflictException CreateResumeConflict(string fileName)
     {
-        var contextFolder = context switch
-        {
-            StorageContext.Resume => "resume",
-            StorageContext.CoverLetter => "cover-letter",
-            _ => throw new ValidationException("Storage context is not supported."),
-        };
-
-        return $"{userId:D}/{contextFolder}/{Guid.NewGuid():N}-{fileName}";
+        return new ConflictException(
+            $"A resume version named '{fileName}' already exists. "
+            + "Change the filename or select the existing version.");
     }
 }

@@ -1,6 +1,7 @@
 using JobTrack.Common.Exceptions;
 using JobTrack.Common.Pagination;
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Modules.Documents.Contracts;
 using JobTrack.Modules.JobApplication.Contracts;
 using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.JobApplication.Enums;
@@ -43,7 +44,7 @@ public sealed class JobApplicationService(
         return MapResponse(application);
     }
 
-    public async Task<JobApplicationResponse> GetByIdAsync(
+    public async Task<JobApplicationDetailResponse> GetByIdAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default)
@@ -54,7 +55,7 @@ public sealed class JobApplicationService(
             cancellationToken)
             ?? throw new NotFoundException("Job application was not found.");
 
-        return MapResponse(jobApplication);
+        return MapDetailResponse(jobApplication);
     }
 
     public async Task<PagedResult<JobApplicationResponse>> GetAllAsync(
@@ -246,6 +247,46 @@ public sealed class JobApplicationService(
             application.JobLink,
             application.PortfolioLink,
             application.GitHubLink,
+            application.CreatedAtUtc,
+            application.UpdatedAtUtc);
+    }
+
+    private static JobApplicationDetailResponse MapDetailResponse(
+        JobApplicationEntity application)
+    {
+        var resume = application.Resume is null
+            ? null
+            : new ResumeResponse(
+                application.Resume.Id,
+                application.Resume.FileName,
+                application.Resume.ObjectKey,
+                application.Resume.ContentType,
+                application.Resume.CreatedAtUtc,
+                application.Resume.UpdatedAtUtc);
+
+        var coverLetter = application.CoverLetter is null
+            ? null
+            : new CoverLetterResponse(
+                application.CoverLetter.Id,
+                application.CoverLetter.JobApplicationId,
+                application.CoverLetter.FileName,
+                application.CoverLetter.ObjectKey,
+                application.CoverLetter.ContentType,
+                application.CoverLetter.CreatedAtUtc,
+                application.CoverLetter.UpdatedAtUtc);
+
+        return new JobApplicationDetailResponse(
+            application.Id,
+            application.CompanyName,
+            application.RoleTitle,
+            application.Platform,
+            application.ApplicationDate,
+            application.CurrentStatus,
+            application.JobLink,
+            application.PortfolioLink,
+            application.GitHubLink,
+            resume,
+            coverLetter,
             application.CreatedAtUtc,
             application.UpdatedAtUtc);
     }
