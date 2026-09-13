@@ -1,6 +1,9 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
 using JobTrack.Core.UnitOfWork;
 using JobTrack.Database.JobApplication;
 using JobTrack.Database.Users;
@@ -9,11 +12,14 @@ using JobTrack.Database.Repositories;
 using JobTrack.Modules.Auth.Configuration;
 using JobTrack.Modules.Auth.Services;
 using JobTrack.Modules.JobApplication.Services;
+using JobTrack.Modules.Storage.Configuration;
+using JobTrack.Modules.Storage.Services;
 using JobTrack.Modules.Users.Entities;
 using JobTrack.Modules.Users.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
@@ -70,9 +76,44 @@ public static class ServiceCollectionExtensions
 
         services.AddDatabase(configuration);
         services.AddAuthentication(configuration);
+        services.AddStorage(configuration);
         services.AddAuthorization();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJobApplicationService, JobApplicationService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddStorage(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddOptions<S3StorageOptions>()
+            .Bind(configuration.GetSection(S3StorageOptions.SectionName))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.AccessKey),
+                "S3:AccessKey is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.SecretKey),
+                "S3:SecretKey is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.BucketName),
+                "S3:BucketName is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Region),
+                "S3:Region is required.")
+            .Validate(options => options.UploadUrlExpiryMinutes is >= 1 and <= 60,
+                "S3:UploadUrlExpiryMinutes must be between 1 and 60.")
+            .ValidateOnStart();
+
+        services.AddSingleton<IAmazonS3>(serviceProvider =>
+        {
+            var options = serviceProvider
+                .GetRequiredService<IOptions<S3StorageOptions>>()
+                .Value;
+            var credentials = new BasicAWSCredentials(options.AccessKey, options.SecretKey);
+            var region = RegionEndpoint.GetBySystemName(options.Region);
+
+            return new AmazonS3Client(credentials, region);
+        });
+
+        services.AddScoped<IStorageService, S3StorageService>();
 
         return services;
     }

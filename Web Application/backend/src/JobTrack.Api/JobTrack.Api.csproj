@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>JobTrack.Api-1f78b3d2-4120-47ec-b521-d2c9d9df445b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

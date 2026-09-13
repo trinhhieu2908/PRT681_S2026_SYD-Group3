@@ -155,6 +155,74 @@ Authorization: Bearer <access-token>
 The API returns `404 Not Found` when the record does not exist or belongs to a
 different user.
 
+## S3 Document Upload URLs
+
+S3 credentials are stored with .NET User Secrets for local development and are
+not written to `appsettings.json` or committed to Git. Configure them from the
+`backend` directory:
+
+```bash
+dotnet user-secrets set "S3:AccessKey" "<aws-access-key>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+
+dotnet user-secrets set "S3:SecretKey" "<aws-secret-key>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+
+dotnet user-secrets set "S3:BucketName" "<s3-bucket-name>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+The default region is `ap-southeast-2`. Change it when the bucket is in another
+region:
+
+```bash
+dotnet user-secrets set "S3:Region" "<aws-region>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+Generate one or more authenticated upload URLs:
+
+```http
+POST /api/storage/upload-presigned-urls
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "context": "resume",
+  "fileNames": [
+    "resume-v1.pdf",
+    "resume-v2.docx"
+  ]
+}
+```
+
+`context` must be `resume` or `cover-letter`. Each request accepts between 1
+and 10 PDF, DOC, or DOCX filenames. The authenticated user ID is taken from the
+JWT and used to create keys such as:
+
+```text
+{userId}/resume/{uniqueId}-resume-v1.pdf
+{userId}/cover-letter/{uniqueId}-cover-letter-v1.pdf
+```
+
+Upload each file directly to its `uploadUrl` with the returned `httpMethod` and
+`Content-Type`. Keep the returned `objectKey`; the later document-record API
+will store that key rather than the temporary URL.
+
+The S3 bucket must allow browser `PUT` requests from the frontend origin. A
+development CORS rule can use:
+
+```json
+[
+  {
+    "AllowedOrigins": ["http://localhost:5173"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "ExposeHeaders": ["ETag"]
+  }
+]
+```
+
 ## Create and Apply EF Core Migration
 
 Install the EF CLI if it is not already installed:
