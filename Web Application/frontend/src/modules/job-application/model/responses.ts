@@ -1,3 +1,8 @@
+import type {
+  CoverLetterResponse,
+  ResumeResponse,
+} from "@/modules/document/model/responses";
+
 export type JobApplicationStatus =
   | "Applied"
   | "Interview"
@@ -18,6 +23,11 @@ export interface JobApplicationResponse {
   gitHubLink: string | null;
   createdAtUtc: string;
   updatedAtUtc: string | null;
+}
+
+export interface JobApplicationDetailResponse extends JobApplicationResponse {
+  resume: ResumeResponse | null;
+  coverLetter: CoverLetterResponse | null;
 }
 
 export interface PagedJobApplicationsResponse {

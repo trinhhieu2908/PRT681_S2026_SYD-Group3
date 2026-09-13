@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { JOB_APPLICATION_QUERY_KEY } from "@/modules/job-application/hooks/useJobApplications";
-import { JobApplicationResponse } from "@/modules/job-application/model/responses";
+import {
+  JobApplicationDetailResponse,
+  JobApplicationResponse,
+} from "@/modules/job-application/model/responses";
 import { jobApplicationApi } from "@/modules/job-application/services/api.service";
 
 export const useUnarchiveJobApplication = (id: string) => {
@@ -11,9 +14,15 @@ export const useUnarchiveJobApplication = (id: string) => {
     mutationFn: () => jobApplicationApi.unarchive(id),
     retry: false,
     onSuccess: (application: JobApplicationResponse) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<JobApplicationDetailResponse>(
         [...JOB_APPLICATION_QUERY_KEY, "detail", id],
-        application,
+        (current) =>
+          current
+            ? {
+                ...current,
+                ...application,
+              }
+            : undefined,
       );
       void queryClient.invalidateQueries({
         queryKey: JOB_APPLICATION_QUERY_KEY,

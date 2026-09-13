@@ -6,15 +6,17 @@ import {
   UpdateJobApplicationStatusRequest,
 } from "@/modules/job-application/model/requests";
 import {
+  JobApplicationDetailResponse,
   JobApplicationResponse,
   PagedJobApplicationsResponse,
 } from "@/modules/job-application/model/responses";
 
 export const jobApplicationApi = {
-  getById: async (id: string): Promise<JobApplicationResponse> => {
-    return axiosClient.get<JobApplicationResponse, JobApplicationResponse>(
-      `${JOB_APPLICATION_API.root}/${id}`,
-    );
+  getById: async (id: string): Promise<JobApplicationDetailResponse> => {
+    return axiosClient.get<
+      JobApplicationDetailResponse,
+      JobApplicationDetailResponse
+    >(`${JOB_APPLICATION_API.root}/${id}`);
   },
 
   getAll: async (

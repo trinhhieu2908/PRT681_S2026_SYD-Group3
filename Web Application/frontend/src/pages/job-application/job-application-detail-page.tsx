@@ -10,6 +10,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { Button } from "@/common/components/ui/button";
 import { formatDate } from "@/common/utils/date";
+import JobApplicationDocuments from "@/modules/document/components/job-application-documents";
 import JobApplicationStatusBadge from "@/modules/job-application/components/job-application-status-badge";
 import JobApplicationStatusControl from "@/modules/job-application/components/job-application-status-control";
 import { useJobApplication } from "@/modules/job-application/hooks/useJobApplication";
@@ -172,42 +173,46 @@ const JobApplicationDetailPage = () => {
             className="lg:col-start-2 lg:row-start-1"
           />
 
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:col-start-1 lg:row-start-1">
-            <h2 className="text-lg font-semibold text-gray-950">
-              Application links
-            </h2>
-            <p className="mt-1 text-sm text-gray-600">
-              Resources saved with this opportunity.
-            </p>
+          <div className="space-y-6 lg:col-start-1 lg:row-start-1">
+            <JobApplicationDocuments application={data} />
 
-            {links.length > 0 ? (
-              <div className="mt-5 grid gap-3">
-                {links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group flex items-center justify-between gap-4 rounded-xl border border-gray-200 p-4 transition hover:border-primary-200 hover:bg-primary-50/50"
-                  >
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {link.label}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {link.description}
-                      </p>
-                    </div>
-                    <ExternalLink className="h-5 w-5 shrink-0 text-primary-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-5 rounded-xl border border-dashed border-gray-200 px-5 py-10 text-center text-sm text-gray-500">
-                No links were added to this application.
-              </div>
-            )}
-          </section>
+            <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-950">
+                Application links
+              </h2>
+              <p className="mt-1 text-sm text-gray-600">
+                Resources saved with this opportunity.
+              </p>
+
+              {links.length > 0 ? (
+                <div className="mt-5 grid gap-3">
+                  {links.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex items-center justify-between gap-4 rounded-xl border border-gray-200 p-4 transition hover:border-primary-200 hover:bg-primary-50/50"
+                    >
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          {link.label}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                          {link.description}
+                        </p>
+                      </div>
+                      <ExternalLink className="h-5 w-5 shrink-0 text-primary-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-5 rounded-xl border border-dashed border-gray-200 px-5 py-10 text-center text-sm text-gray-500">
+                  No links were added to this application.
+                </div>
+              )}
+            </section>
+          </div>
         </div>
       </div>
     </div>
