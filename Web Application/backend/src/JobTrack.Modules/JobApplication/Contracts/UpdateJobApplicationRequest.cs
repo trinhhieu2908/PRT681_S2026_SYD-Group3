@@ -4,19 +4,15 @@ namespace JobTrack.Modules.JobApplication.Contracts;
 
 public sealed record UpdateJobApplicationRequest
 {
-    [Required]
     [MaxLength(150)]
-    public string CompanyName { get; init; } = string.Empty;
+    public string? CompanyName { get; init; }
 
-    [Required]
     [MaxLength(150)]
-    public string RoleTitle { get; init; } = string.Empty;
+    public string? RoleTitle { get; init; }
 
-    [Required]
     [MaxLength(50)]
-    public string Platform { get; init; } = string.Empty;
+    public string? Platform { get; init; }
 
-    [Required]
     public DateOnly? ApplicationDate { get; init; }
 
     [Url]

@@ -173,9 +173,10 @@ Authorization: Bearer <access-token>
 }
 ```
 
-This is a full update of the editable fields. Optional links can be set to
-`null` to clear them. Status and attached documents are changed through their
-dedicated endpoints.
+Every property is optional. Only non-null properties are updated, while omitted
+or `null` properties leave their current values unchanged. An empty string can
+be used to clear an optional link. Status and attached documents are changed
+through their dedicated endpoints.
 
 ## S3 Document Upload URLs
 

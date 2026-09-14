@@ -124,24 +124,59 @@ public sealed class JobApplicationService(
         UpdateJobApplicationRequest request,
         CancellationToken cancellationToken = default)
     {
-        var applicationDate = request.ApplicationDate
-            ?? throw new ValidationException("Application date is required.");
-
         var jobApplication = await GetForUpdateAsync(id, userId, cancellationToken);
+        var hasChanges = false;
 
-        jobApplication.CompanyName = ValidateRequired(
-            request.CompanyName,
-            150,
-            "Company name");
-        jobApplication.RoleTitle = ValidateRequired(request.RoleTitle, 150, "Role title");
-        jobApplication.Platform = ValidateRequired(request.Platform, 50, "Platform");
-        jobApplication.ApplicationDate = applicationDate;
-        jobApplication.JobLink = NormalizeOptional(request.JobLink);
-        jobApplication.PortfolioLink = NormalizeOptional(request.PortfolioLink);
-        jobApplication.GitHubLink = NormalizeOptional(request.GitHubLink);
-        jobApplication.UpdatedAtUtc = DateTime.UtcNow;
+        if (request.CompanyName is not null)
+        {
+            jobApplication.CompanyName = ValidateRequired(
+                request.CompanyName,
+                150,
+                "Company name");
+            hasChanges = true;
+        }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (request.RoleTitle is not null)
+        {
+            jobApplication.RoleTitle = ValidateRequired(request.RoleTitle, 150, "Role title");
+            hasChanges = true;
+        }
+
+        if (request.Platform is not null)
+        {
+            jobApplication.Platform = ValidateRequired(request.Platform, 50, "Platform");
+            hasChanges = true;
+        }
+
+        if (request.ApplicationDate.HasValue)
+        {
+            jobApplication.ApplicationDate = request.ApplicationDate.Value;
+            hasChanges = true;
+        }
+
+        if (request.JobLink is not null)
+        {
+            jobApplication.JobLink = NormalizeOptional(request.JobLink);
+            hasChanges = true;
+        }
+
+        if (request.PortfolioLink is not null)
+        {
+            jobApplication.PortfolioLink = NormalizeOptional(request.PortfolioLink);
+            hasChanges = true;
+        }
+
+        if (request.GitHubLink is not null)
+        {
+            jobApplication.GitHubLink = NormalizeOptional(request.GitHubLink);
+            hasChanges = true;
+        }
+
+        if (hasChanges)
+        {
+            jobApplication.UpdatedAtUtc = DateTime.UtcNow;
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
 
         return MapResponse(jobApplication);
     }
