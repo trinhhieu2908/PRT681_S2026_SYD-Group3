@@ -9,6 +9,27 @@ export interface CreateJobApplicationRequest {
   gitHubLink?: string | null;
 }
 
+export interface UpdateJobApplicationRequest {
+  companyName?: string;
+  roleTitle?: string;
+  platform?: string;
+  applicationDate?: string;
+  jobLink?: string;
+  portfolioLink?: string;
+  gitHubLink?: string;
+}
+
+export type JobApplicationLinkField =
+  | "jobLink"
+  | "portfolioLink"
+  | "gitHubLink";
+
+export type JobApplicationEditableField = keyof UpdateJobApplicationRequest;
+
+export type JobApplicationEditableValue<
+  Field extends JobApplicationEditableField,
+> = Field extends JobApplicationLinkField ? string | null : string;
+
 export interface GetJobApplicationsRequest {
   pageNumber: number;
   pageSize: number;

@@ -3,6 +3,7 @@ import { JOB_APPLICATION_API } from "@/common/constants/api-endpoints";
 import {
   CreateJobApplicationRequest,
   GetJobApplicationsRequest,
+  UpdateJobApplicationRequest,
   UpdateJobApplicationStatusRequest,
 } from "@/modules/job-application/model/requests";
 import {
@@ -38,6 +39,17 @@ export const jobApplicationApi = {
       JobApplicationResponse,
       CreateJobApplicationRequest
     >(JOB_APPLICATION_API.root, request);
+  },
+
+  update: async (
+    id: string,
+    request: UpdateJobApplicationRequest,
+  ): Promise<JobApplicationResponse> => {
+    return axiosClient.put<
+      JobApplicationResponse,
+      JobApplicationResponse,
+      UpdateJobApplicationRequest
+    >(`${JOB_APPLICATION_API.root}/${id}`, request);
   },
 
   updateStatus: async (
