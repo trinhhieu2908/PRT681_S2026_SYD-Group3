@@ -6,5 +6,6 @@ public sealed record CoverLetterResponse(
     string FileName,
     string ObjectKey,
     string ContentType,
+    string Url,
     DateTime CreatedAtUtc,
     DateTime? UpdatedAtUtc);

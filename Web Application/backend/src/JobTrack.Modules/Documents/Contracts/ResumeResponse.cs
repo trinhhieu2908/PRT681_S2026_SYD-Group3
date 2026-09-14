@@ -5,5 +5,6 @@ public sealed record ResumeResponse(
     string FileName,
     string ObjectKey,
     string ContentType,
+    string Url,
     DateTime CreatedAtUtc,
     DateTime? UpdatedAtUtc);

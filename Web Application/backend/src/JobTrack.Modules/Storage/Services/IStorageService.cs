@@ -8,4 +8,8 @@ public interface IStorageService
         Guid userId,
         GenerateUploadPresignedUrlsRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<string> GetPresignedUrlAsync(
+        string objectKey,
+        CancellationToken cancellationToken = default);
 }

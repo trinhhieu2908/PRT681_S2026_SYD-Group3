@@ -78,6 +78,27 @@ public sealed class S3StorageService(
         return new GenerateUploadPresignedUrlsResponse(uploads);
     }
 
+    public async Task<string> GetPresignedUrlAsync(
+        string objectKey,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(objectKey))
+        {
+            throw new ValidationException("Storage object key is required.");
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return await s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest
+        {
+            BucketName = _options.BucketName,
+            Key = objectKey,
+            Verb = HttpVerb.GET,
+            Expires = DateTime.UtcNow.AddMinutes(_options.DownloadUrlExpiryMinutes),
+            Protocol = Protocol.HTTPS,
+        });
+    }
+
     private async Task ValidateResumeFileNamesAsync(
         Guid userId,
         IReadOnlyCollection<string> fileNames,

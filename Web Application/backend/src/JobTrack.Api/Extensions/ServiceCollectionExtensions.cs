@@ -104,6 +104,8 @@ public static class ServiceCollectionExtensions
                 "S3:Region is required.")
             .Validate(options => options.UploadUrlExpiryMinutes is >= 1 and <= 60,
                 "S3:UploadUrlExpiryMinutes must be between 1 and 60.")
+            .Validate(options => options.DownloadUrlExpiryMinutes is >= 1 and <= 60,
+                "S3:DownloadUrlExpiryMinutes must be between 1 and 60.")
             .ValidateOnStart();
 
         services.AddSingleton<IAmazonS3>(serviceProvider =>

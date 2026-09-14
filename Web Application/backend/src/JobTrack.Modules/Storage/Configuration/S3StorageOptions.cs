@@ -9,4 +9,5 @@ public sealed class S3StorageOptions
     public string BucketName { get; set; } = string.Empty;
     public string Region { get; set; } = string.Empty;
     public int UploadUrlExpiryMinutes { get; set; } = 15;
+    public int DownloadUrlExpiryMinutes { get; set; } = 15;
 }

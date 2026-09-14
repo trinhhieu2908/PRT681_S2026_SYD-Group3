@@ -13,6 +13,7 @@ public sealed class DocumentService(
     IResumeRepository resumeRepository,
     ICoverLetterRepository coverLetterRepository,
     IJobApplicationRepository jobApplicationRepository,
+    IStorageService storageService,
     IUnitOfWork unitOfWork)
     : IDocumentService
 {
@@ -24,9 +25,10 @@ public sealed class DocumentService(
             userId,
             cancellationToken);
 
-        return resumes
-            .Select(MapResumeResponse)
-            .ToArray();
+        var responseTasks = resumes.Select(resume =>
+            MapResumeResponseAsync(resume, cancellationToken));
+
+        return await Task.WhenAll(responseTasks);
     }
 
     public async Task<ResumeResponse> SaveResumeAsync(
@@ -77,7 +79,7 @@ public sealed class DocumentService(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return MapResumeResponse(resume);
+        return await MapResumeResponseAsync(resume, cancellationToken);
     }
 
     public async Task<ResumeResponse> AttachResumeAsync(
@@ -108,7 +110,7 @@ public sealed class DocumentService(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return MapResumeResponse(resume);
+        return await MapResumeResponseAsync(resume, cancellationToken);
     }
 
     public async Task<CoverLetterResponse> SaveCoverLetterAsync(
@@ -163,28 +165,42 @@ public sealed class DocumentService(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return MapCoverLetterResponse(coverLetter);
+        return await MapCoverLetterResponseAsync(coverLetter, cancellationToken);
     }
 
-    public static ResumeResponse MapResumeResponse(Resume resume)
+    private async Task<ResumeResponse> MapResumeResponseAsync(
+        Resume resume,
+        CancellationToken cancellationToken)
     {
+        var presignedUrl = await storageService.GetPresignedUrlAsync(
+            resume.ObjectKey,
+            cancellationToken);
+
         return new ResumeResponse(
             resume.Id,
             resume.FileName,
             resume.ObjectKey,
             resume.ContentType,
+            presignedUrl,
             resume.CreatedAtUtc,
             resume.UpdatedAtUtc);
     }
 
-    public static CoverLetterResponse MapCoverLetterResponse(CoverLetter coverLetter)
+    private async Task<CoverLetterResponse> MapCoverLetterResponseAsync(
+        CoverLetter coverLetter,
+        CancellationToken cancellationToken)
     {
+        var presignedUrl = await storageService.GetPresignedUrlAsync(
+            coverLetter.ObjectKey,
+            cancellationToken);
+
         return new CoverLetterResponse(
             coverLetter.Id,
             coverLetter.JobApplicationId,
             coverLetter.FileName,
             coverLetter.ObjectKey,
             coverLetter.ContentType,
+            presignedUrl,
             coverLetter.CreatedAtUtc,
             coverLetter.UpdatedAtUtc);
     }

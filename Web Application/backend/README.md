@@ -296,16 +296,24 @@ Authorization: Bearer <access-token>
 
 The application detail endpoint returns `resume: null` or `coverLetter: null`
 when a document is not recorded. Otherwise, it returns the saved document
-metadata. The UI can display a null value as `Not recorded`.
+metadata, including a temporary `presignedUrl` for an authenticated S3 `GET`
+request. Resume list, save, attach, and cover-letter save responses also include
+this URL. The frontend can use it to view or download the file without receiving
+AWS credentials.
 
-The S3 bucket must allow browser `PUT` requests from the frontend origin. A
-development CORS rule can use:
+Download URLs expire after 15 minutes by default. The database stores only the
+stable `objectKey`; a fresh URL is generated whenever document metadata is
+returned. Configure the lifetime with `S3:DownloadUrlExpiryMinutes` in
+`appsettings.json`.
+
+The S3 bucket must allow browser `GET` and `PUT` requests from the frontend
+origin. A development CORS rule can use:
 
 ```json
 [
   {
     "AllowedOrigins": ["http://localhost:5173"],
-    "AllowedMethods": ["PUT"],
+    "AllowedMethods": ["GET", "PUT"],
     "AllowedHeaders": ["Content-Type"],
     "ExposeHeaders": ["ETag"]
   }

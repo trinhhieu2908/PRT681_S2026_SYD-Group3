@@ -6,6 +6,7 @@ using JobTrack.Modules.JobApplication.Contracts;
 using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.JobApplication.Enums;
 using JobTrack.Modules.JobApplication.Repositories;
+using JobTrack.Modules.Storage.Services;
 using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
 
 namespace JobTrack.Modules.JobApplication.Services;
@@ -13,6 +14,7 @@ namespace JobTrack.Modules.JobApplication.Services;
 public sealed class JobApplicationService(
     IJobApplicationRepository jobApplicationRepository,
     IJobApplicationStatusHistoryRepository statusHistoryRepository,
+    IStorageService storageService,
     IUnitOfWork unitOfWork)
     : IJobApplicationService
 {
@@ -55,7 +57,7 @@ public sealed class JobApplicationService(
             cancellationToken)
             ?? throw new NotFoundException("Job application was not found.");
 
-        return MapDetailResponse(jobApplication);
+        return await MapDetailResponseAsync(jobApplication, cancellationToken);
     }
 
     public async Task<PagedResult<JobApplicationResponse>> GetAllAsync(
@@ -279,29 +281,44 @@ public sealed class JobApplicationService(
             application.UpdatedAtUtc);
     }
 
-    private static JobApplicationDetailResponse MapDetailResponse(
-        JobApplicationEntity application)
+    private async Task<JobApplicationDetailResponse> MapDetailResponseAsync(
+        JobApplicationEntity application,
+        CancellationToken cancellationToken)
     {
-        var resume = application.Resume is null
-            ? null
-            : new ResumeResponse(
+        ResumeResponse? resume = null;
+        if (application.Resume is not null)
+        {
+            var presignedUrl = await storageService.GetPresignedUrlAsync(
+                application.Resume.ObjectKey,
+                cancellationToken);
+
+            resume = new ResumeResponse(
                 application.Resume.Id,
                 application.Resume.FileName,
                 application.Resume.ObjectKey,
                 application.Resume.ContentType,
+                presignedUrl,
                 application.Resume.CreatedAtUtc,
                 application.Resume.UpdatedAtUtc);
+        }
 
-        var coverLetter = application.CoverLetter is null
-            ? null
-            : new CoverLetterResponse(
+        CoverLetterResponse? coverLetter = null;
+        if (application.CoverLetter is not null)
+        {
+            var presignedUrl = await storageService.GetPresignedUrlAsync(
+                application.CoverLetter.ObjectKey,
+                cancellationToken);
+
+            coverLetter = new CoverLetterResponse(
                 application.CoverLetter.Id,
                 application.CoverLetter.JobApplicationId,
                 application.CoverLetter.FileName,
                 application.CoverLetter.ObjectKey,
                 application.CoverLetter.ContentType,
+                presignedUrl,
                 application.CoverLetter.CreatedAtUtc,
                 application.CoverLetter.UpdatedAtUtc);
+        }
 
         return new JobApplicationDetailResponse(
             application.Id,
