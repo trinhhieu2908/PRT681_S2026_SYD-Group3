@@ -1,5 +1,6 @@
 import {
   CheckCircle2,
+  Eye,
   FileText,
   FileUser,
   Files,
@@ -7,6 +8,10 @@ import {
   Upload,
 } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
+import {
+  MODAL_VIEWS,
+  useModalAction,
+} from "@/common/components/modal/modal-context";
 import { Button } from "@/common/components/ui/button";
 import {
   Select,
@@ -21,6 +26,10 @@ import { useAttachResume } from "@/modules/document/hooks/useAttachResume";
 import { useResumes } from "@/modules/document/hooks/useResumes";
 import { useUploadCoverLetter } from "@/modules/document/hooks/useUploadCoverLetter";
 import { useUploadResume } from "@/modules/document/hooks/useUploadResume";
+import type {
+  DocumentPreviewKind,
+  DocumentPreviewPayload,
+} from "@/modules/document/model/document-preview";
 import { JobApplicationDetailResponse } from "@/modules/job-application/model/responses";
 
 const DOCUMENT_ACCEPT = ".pdf,.doc,.docx";
@@ -54,6 +63,7 @@ interface JobApplicationDocumentsProps {
 const JobApplicationDocuments = ({
   application,
 }: JobApplicationDocumentsProps) => {
+  const { openModal } = useModalAction();
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const coverLetterInputRef = useRef<HTMLInputElement>(null);
   const [resumeFileError, setResumeFileError] = useState<string | null>(null);
@@ -87,6 +97,15 @@ const JobApplicationDocuments = ({
   } = useUploadCoverLetter(application.id, Boolean(application.coverLetter));
 
   const isResumeBusy = isAttaching || isUploadingResume;
+
+  const openDocumentPreview = (documentKind: DocumentPreviewKind) => {
+    const payload: DocumentPreviewPayload = {
+      jobApplicationId: application.id,
+      documentKind,
+    };
+
+    openModal(MODAL_VIEWS.PREVIEW_DOCUMENT, payload);
+  };
 
   const handleResumeSelection = (resumeId: string) => {
     if (resumeId === application.resume?.id) {
@@ -183,9 +202,21 @@ const JobApplicationDocuments = ({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
               Resume
             </p>
-            <p className="mt-1 break-words font-semibold text-gray-950">
-              {application.resume?.fileName ?? "Not recorded"}
-            </p>
+            {application.resume ? (
+              <button
+                type="button"
+                onClick={() => openDocumentPreview("resume")}
+                className="group mt-1 flex max-w-full items-center gap-2 text-left font-semibold text-primary-700 outline-none hover:text-primary-900 focus-visible:rounded focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                aria-label={`Preview current resume ${application.resume.fileName}`}
+              >
+                <span className="break-all underline decoration-primary-200 underline-offset-4 group-hover:decoration-primary-600">
+                  {application.resume.fileName}
+                </span>
+                <Eye className="h-4 w-4 shrink-0" />
+              </button>
+            ) : (
+              <p className="mt-1 font-semibold text-gray-950">Not recorded</p>
+            )}
             {application.resume && (
               <p className="mt-1 text-xs text-gray-500">
                 Selected {formatDate(application.resume.createdAtUtc, "short")}
@@ -315,9 +346,21 @@ const JobApplicationDocuments = ({
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
               Cover letter
             </p>
-            <p className="mt-1 break-words font-semibold text-gray-950">
-              {application.coverLetter?.fileName ?? "Not recorded"}
-            </p>
+            {application.coverLetter ? (
+              <button
+                type="button"
+                onClick={() => openDocumentPreview("cover-letter")}
+                className="group mt-1 flex max-w-full items-center gap-2 text-left font-semibold text-secondary-700 outline-none hover:text-secondary-900 focus-visible:rounded focus-visible:ring-2 focus-visible:ring-secondary-500 focus-visible:ring-offset-2"
+                aria-label={`Preview current cover letter ${application.coverLetter.fileName}`}
+              >
+                <span className="break-all underline decoration-secondary-200 underline-offset-4 group-hover:decoration-secondary-600">
+                  {application.coverLetter.fileName}
+                </span>
+                <Eye className="h-4 w-4 shrink-0" />
+              </button>
+            ) : (
+              <p className="mt-1 font-semibold text-gray-950">Not recorded</p>
+            )}
             {application.coverLetter && (
               <p className="mt-1 text-xs text-gray-500">
                 {application.coverLetter.updatedAtUtc

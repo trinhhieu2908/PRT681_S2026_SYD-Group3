@@ -3,6 +3,9 @@ export interface ResumeResponse {
   fileName: string;
   objectKey: string;
   contentType: string;
+  presignUrl?: string;
+  presignedUrl?: string;
+  url?: string;
   createdAtUtc: string;
   updatedAtUtc: string | null;
 }
@@ -13,6 +16,9 @@ export interface CoverLetterResponse {
   fileName: string;
   objectKey: string;
   contentType: string;
+  presignUrl?: string;
+  presignedUrl?: string;
+  url?: string;
   createdAtUtc: string;
   updatedAtUtc: string | null;
 }

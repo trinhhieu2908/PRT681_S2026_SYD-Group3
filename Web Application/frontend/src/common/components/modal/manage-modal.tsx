@@ -3,12 +3,20 @@ import {
   useModalAction,
   useModalState,
 } from "@/common/components/modal/modal-context";
-import { Dialog } from "@/common/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/common/components/ui/dialog";
+import { Spinner } from "@/common/components/ui/spinner";
 import { lazy, Suspense, useEffect } from "react";
 
 const CreateJobApplicationForm = lazy(
   () =>
     import("@/modules/job-application/components/create-job-application-form"),
+);
+const DocumentPreviewModal = lazy(
+  () => import("@/modules/document/components/document-preview-modal"),
 );
 
 const ManagedModal = () => {
@@ -31,6 +39,19 @@ const ManagedModal = () => {
         return (
           <Suspense fallback={null}>
             <CreateJobApplicationForm />
+          </Suspense>
+        );
+      case MODAL_VIEWS.PREVIEW_DOCUMENT:
+        return (
+          <Suspense
+            fallback={
+              <DialogContent className="flex h-[94dvh] w-[calc(100vw-1rem)] max-w-7xl items-center justify-center bg-gray-100">
+                <DialogTitle className="sr-only">Document preview</DialogTitle>
+                <Spinner className="h-7 w-7 border-t-primary-600" />
+              </DialogContent>
+            }
+          >
+            <DocumentPreviewModal />
           </Suspense>
         );
       default:
