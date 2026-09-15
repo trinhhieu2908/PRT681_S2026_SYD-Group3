@@ -1,0 +1,101 @@
+ApplicationId,CompanyName,RoleTitle,Platform,ApplicationDate,CurrentStatus,ResumeVersion,CoverLetterVersion,PortfolioLink,GitHubLink,CreatedTimestamp
+APP-001,Accenture Australia,Graduate Software Engineer,Company Website,7/15/2026,Archived,,Cover Letter v1.1,https://portfolio.example.com/p2,https://github.com/demo-user/jobtrack-sample-001,7/15/2026 10:17
+APP-002,HealthTech Labs,Data Analyst,Referral,7/21/2026,Rejected,Resume v2.0,Cover Letter v1.0,,,7/21/2026 10:59
+APP-003,Sydney Digital Labs,Graduate Software Engineer,Indeed,8/25/2026,Applied,Resume v2.0,,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-003,8/25/2026 10:28
+APP-004,CloudCore,Junior Data Analyst,LinkedIn,7/8/2026,Rejected,Resume v1.0,Cover Letter v1.1,https://portfolio.example.com/p5,,7/8/2026 10:34
+APP-005,FinTech Hub,Backend Developer,LinkedIn,7/19/2026,Withdrawn,,Cover Letter v1.0,https://portfolio.example.com/p6,,7/19/2026 10:44
+APP-006,Accenture Australia,Graduate Software Engineer,Company Website,9/4/2026,Interview,Resume v1.0,,,https://github.com/demo-user/jobtrack-sample-006,9/4/2026 10:52
+APP-007,DataWorks Australia,Product Analyst,LinkedIn,9/3/2026,Rejected,Resume v1.1,Cover Letter v1.0,https://portfolio.example.com/p8,,9/3/2026 10:51
+APP-008,HealthTech Labs,QA Tester,Referral,9/4/2026,Applied,Resume v2.0,Cover Letter v1.0,,,9/4/2026 10:22
+APP-009,CanvaWorks,Graduate Software Engineer,Referral,8/20/2026,Archived,Resume v1.0,,https://portfolio.example.com/p10,https://github.com/demo-user/jobtrack-sample-009,8/20/2026 10:20
+APP-010,RetailPlus,Software Engineer,Referral,8/28/2026,Rejected,Resume v2.0,Cover Letter v1.0,,,8/28/2026 10:57
+APP-011,BlueSky Software,Frontend Developer,Indeed,8/12/2026,Offer,,,,https://github.com/demo-user/jobtrack-sample-011,8/12/2026 10:24
+APP-012,CloudCore,Backend Developer,Indeed,8/5/2026,Interview,Resume v1.1,,,https://github.com/demo-user/jobtrack-sample-012,8/5/2026 10:47
+APP-013,Insight Analytics,Product Analyst,Company Website,8/30/2026,Archived,Resume v1.0,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-013,8/30/2026 10:52
+APP-014,Accenture Australia,Data Analyst,Company Website,7/27/2026,Rejected,,Cover Letter v1.0,,,7/27/2026 10:42
+APP-015,CanvaWorks,Junior Data Analyst,Referral,7/13/2026,Rejected,Resume v2.0,Cover Letter v1.1,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-015,7/13/2026 10:58
+APP-016,Westpac Digital,Junior Data Analyst,Company Website,7/8/2026,Applied,Resume v2.0,,https://portfolio.example.com/p5,https://github.com/demo-user/jobtrack-sample-016,7/8/2026 10:22
+APP-017,Sydney Digital Labs,Business Analyst,Indeed,7/5/2026,Applied,Resume v2.0,Cover Letter v1.0,https://portfolio.example.com/p6,,7/5/2026 10:18
+APP-018,CanvaWorks,Software Engineer,Indeed,8/8/2026,Rejected,Resume v2.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-018,8/8/2026 10:44
+APP-019,CanvaWorks,Data Analyst,Indeed,7/28/2026,Interview,Resume v1.1,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-019,7/28/2026 10:47
+APP-020,Westpac Digital,QA Tester,LinkedIn,8/2/2026,Applied,Resume v1.0,,,,8/2/2026 10:54
+APP-021,CloudCore,Product Analyst,Referral,7/19/2026,Rejected,Resume v2.0,Cover Letter v1.0,,,7/19/2026 10:50
+APP-022,RetailPlus,Graduate Software Engineer,LinkedIn,8/6/2026,Rejected,,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-022,8/6/2026 10:12
+APP-023,Deloitte Australia,Junior Data Analyst,SEEK,8/5/2026,Archived,Resume v1.0,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-023,8/5/2026 10:29
+APP-024,RetailPlus,Frontend Developer,LinkedIn,8/10/2026,Interview,Resume v2.0,Cover Letter v1.1,,,8/10/2026 10:44
+APP-025,RetailPlus,Graduate Software Engineer,Referral,8/14/2026,Interview,Resume v1.1,,https://portfolio.example.com/p2,https://github.com/demo-user/jobtrack-sample-025,8/14/2026 10:19
+APP-026,BlueSky Software,Junior Data Analyst,Indeed,7/19/2026,Applied,Resume v1.0,,https://portfolio.example.com/p3,https://github.com/demo-user/jobtrack-sample-026,7/19/2026 10:18
+APP-027,Westpac Digital,Junior Data Analyst,Company Website,7/13/2026,Applied,Resume v2.0,,,https://github.com/demo-user/jobtrack-sample-027,7/13/2026 10:54
+APP-028,CloudCore,Junior Data Analyst,Referral,7/24/2026,Rejected,Resume v1.0,,https://portfolio.example.com/p5,https://github.com/demo-user/jobtrack-sample-028,7/24/2026 10:16
+APP-029,Deloitte Australia,Frontend Developer,Referral,7/16/2026,Rejected,,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-029,7/16/2026 10:59
+APP-030,CloudCore,Software Engineer,Company Website,7/3/2026,Applied,Resume v2.0,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-030,7/3/2026 10:32
+APP-031,FinTech Hub,Product Analyst,Company Website,7/8/2026,Rejected,,,https://portfolio.example.com/p8,https://github.com/demo-user/jobtrack-sample-031,7/8/2026 10:23
+APP-032,Insight Analytics,Junior Software Developer,Referral,7/20/2026,Interview,,,,https://github.com/demo-user/jobtrack-sample-032,7/20/2026 10:11
+APP-033,RetailPlus,QA Tester,Referral,8/21/2026,Archived,,Cover Letter v1.1,https://portfolio.example.com/p10,https://github.com/demo-user/jobtrack-sample-033,8/21/2026 10:34
+APP-034,CloudCore,Backend Developer,Indeed,7/6/2026,Rejected,Resume v1.1,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-034,7/6/2026 10:24
+APP-035,Westpac Digital,Backend Developer,LinkedIn,9/9/2026,Interview,Resume v2.0,,https://portfolio.example.com/p12,https://github.com/demo-user/jobtrack-sample-035,9/9/2026 10:58
+APP-036,BlueSky Software,Product Analyst,Indeed,7/20/2026,Interview,Resume v2.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-036,7/20/2026 10:37
+APP-037,DataWorks Australia,Data Analyst,LinkedIn,7/27/2026,Interview,,Cover Letter v1.1,,,7/27/2026 10:17
+APP-038,Westpac Digital,Business Analyst,Indeed,8/5/2026,Applied,Resume v1.0,,https://portfolio.example.com/p3,https://github.com/demo-user/jobtrack-sample-038,8/5/2026 10:46
+APP-039,Insight Analytics,Software Engineer,LinkedIn,8/3/2026,Applied,Resume v1.1,,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-039,8/3/2026 10:32
+APP-040,Accenture Australia,Backend Developer,LinkedIn,8/31/2026,Interview,,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-040,8/31/2026 10:43
+APP-041,Telstra Technology,Backend Developer,LinkedIn,8/16/2026,Archived,Resume v1.1,,,https://github.com/demo-user/jobtrack-sample-041,8/16/2026 10:53
+APP-042,TechNova Solutions,Product Analyst,LinkedIn,8/13/2026,Applied,Resume v2.0,Cover Letter v1.0,https://portfolio.example.com/p7,,8/13/2026 10:35
+APP-043,CloudCore,Junior Software Developer,SEEK,7/9/2026,Applied,Resume v1.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-043,7/9/2026 10:56
+APP-044,BlueSky Software,Business Analyst,SEEK,7/30/2026,Withdrawn,,Cover Letter v1.1,,,7/30/2026 10:28
+APP-045,TechNova Solutions,Graduate Software Engineer,Referral,7/25/2026,Archived,Resume v1.1,Cover Letter v1.0,,,7/25/2026 10:16
+APP-046,Insight Analytics,Junior Software Developer,Indeed,8/24/2026,Offer,Resume v1.1,,https://portfolio.example.com/p11,,8/24/2026 10:29
+APP-047,Accenture Australia,IT Support Specialist,Company Website,7/8/2026,Applied,Resume v1.1,Cover Letter v1.1,https://portfolio.example.com/p12,https://github.com/demo-user/jobtrack-sample-047,7/8/2026 10:10
+APP-048,TechNova Solutions,QA Tester,SEEK,7/18/2026,Applied,,Cover Letter v1.1,,,7/18/2026 10:52
+APP-049,DataWorks Australia,Frontend Developer,LinkedIn,8/26/2026,Applied,Resume v2.0,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-049,8/26/2026 10:51
+APP-050,Insight Analytics,Product Analyst,Indeed,8/12/2026,Applied,Resume v2.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-050,8/12/2026 10:31
+APP-051,Westpac Digital,Business Analyst,Indeed,7/24/2026,Offer,Resume v1.0,Cover Letter v1.0,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-051,7/24/2026 10:32
+APP-052,HealthTech Labs,Junior Data Analyst,Referral,7/7/2026,Applied,Resume v2.0,Cover Letter v1.1,https://portfolio.example.com/p5,,7/7/2026 10:37
+APP-053,REA Group,Business Analyst,LinkedIn,7/16/2026,Interview,Resume v2.0,,https://portfolio.example.com/p6,,7/16/2026 10:59
+APP-054,CanvaWorks,QA Tester,SEEK,8/30/2026,Applied,Resume v2.0,Cover Letter v1.1,https://portfolio.example.com/p7,,8/30/2026 10:42
+APP-055,Insight Analytics,Automation Tester,Indeed,8/22/2026,Archived,Resume v1.1,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-055,8/22/2026 10:51
+APP-056,CanvaWorks,Backend Developer,Referral,7/1/2026,Archived,Resume v2.0,,https://portfolio.example.com/p9,https://github.com/demo-user/jobtrack-sample-056,7/1/2026 10:36
+APP-057,CloudCore,Graduate Software Engineer,Company Website,7/24/2026,Applied,,,https://portfolio.example.com/p10,https://github.com/demo-user/jobtrack-sample-057,7/24/2026 10:30
+APP-058,RetailPlus,Junior Data Analyst,LinkedIn,9/1/2026,Applied,Resume v1.1,Cover Letter v1.1,https://portfolio.example.com/p11,,9/1/2026 10:11
+APP-059,HealthTech Labs,Software Engineer,Indeed,9/4/2026,Withdrawn,Resume v1.1,Cover Letter v1.0,https://portfolio.example.com/p12,https://github.com/demo-user/jobtrack-sample-059,9/4/2026 10:47
+APP-060,CanvaWorks,Business Analyst,LinkedIn,8/8/2026,Rejected,Resume v2.0,Cover Letter v1.0,,,8/8/2026 10:38
+APP-061,CloudCore,Business Analyst,Company Website,8/29/2026,Interview,Resume v1.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-061,8/29/2026 10:57
+APP-062,Sydney Digital Labs,Backend Developer,Indeed,8/1/2026,Applied,Resume v1.1,,,,8/1/2026 10:39
+APP-063,FinTech Hub,Data Analyst,LinkedIn,8/22/2026,Interview,Resume v1.1,Cover Letter v1.1,,https://github.com/demo-user/jobtrack-sample-063,8/22/2026 10:51
+APP-064,HealthTech Labs,Data Analyst,Indeed,7/9/2026,Interview,Resume v1.0,,https://portfolio.example.com/p5,https://github.com/demo-user/jobtrack-sample-064,7/9/2026 10:51
+APP-065,Westpac Digital,IT Support Specialist,Referral,8/31/2026,Interview,,,,,8/31/2026 10:21
+APP-066,BlueSky Software,Frontend Developer,Referral,7/16/2026,Applied,,Cover Letter v1.1,https://portfolio.example.com/p7,,7/16/2026 10:53
+APP-067,HealthTech Labs,Junior Software Developer,LinkedIn,8/13/2026,Applied,Resume v1.1,,,https://github.com/demo-user/jobtrack-sample-067,8/13/2026 10:18
+APP-068,Accenture Australia,Data Analyst,Company Website,9/5/2026,Archived,Resume v1.1,,https://portfolio.example.com/p9,https://github.com/demo-user/jobtrack-sample-068,9/5/2026 10:52
+APP-069,Telstra Technology,Software Engineer,Referral,7/11/2026,Applied,Resume v1.0,,https://portfolio.example.com/p10,,7/11/2026 10:30
+APP-070,TechNova Solutions,Graduate Software Engineer,Referral,7/7/2026,Archived,,Cover Letter v1.0,,,7/7/2026 10:12
+APP-071,REA Group,IT Support Specialist,Indeed,8/12/2026,Interview,Resume v1.0,,,https://github.com/demo-user/jobtrack-sample-071,8/12/2026 10:41
+APP-072,Insight Analytics,QA Tester,SEEK,7/15/2026,Applied,Resume v2.0,,https://portfolio.example.com/p1,https://github.com/demo-user/jobtrack-sample-072,7/15/2026 10:25
+APP-073,CloudCore,Automation Tester,Indeed,7/26/2026,Offer,Resume v1.0,Cover Letter v1.1,https://portfolio.example.com/p2,https://github.com/demo-user/jobtrack-sample-073,7/26/2026 10:19
+APP-074,Telstra Technology,Software Engineer,Referral,7/12/2026,Rejected,Resume v2.0,Cover Letter v1.0,,https://github.com/demo-user/jobtrack-sample-074,7/12/2026 10:31
+APP-075,Westpac Digital,Junior Data Analyst,Company Website,7/20/2026,Applied,Resume v2.0,Cover Letter v1.1,,,7/20/2026 10:34
+APP-076,DataWorks Australia,Junior Software Developer,Referral,7/5/2026,Rejected,Resume v1.0,,https://portfolio.example.com/p5,,7/5/2026 10:26
+APP-077,Sydney Digital Labs,Junior Software Developer,SEEK,8/23/2026,Archived,Resume v1.1,,,,8/23/2026 10:26
+APP-078,Westpac Digital,IT Support Specialist,LinkedIn,9/9/2026,Rejected,Resume v1.0,,,https://github.com/demo-user/jobtrack-sample-078,9/9/2026 10:35
+APP-079,REA Group,Product Analyst,SEEK,7/8/2026,Interview,,,,,7/8/2026 10:21
+APP-080,DataWorks Australia,IT Support Specialist,Indeed,8/26/2026,Archived,Resume v1.1,Cover Letter v1.1,https://portfolio.example.com/p9,,8/26/2026 10:29
+APP-081,FinTech Hub,QA Tester,Indeed,7/3/2026,Rejected,Resume v1.1,,,https://github.com/demo-user/jobtrack-sample-081,7/3/2026 10:45
+APP-082,TechNova Solutions,IT Support Specialist,Referral,7/4/2026,Applied,Resume v1.0,,,,7/4/2026 10:54
+APP-083,Sydney Digital Labs,Graduate Software Engineer,SEEK,8/1/2026,Archived,Resume v2.0,,https://portfolio.example.com/p12,,8/1/2026 10:31
+APP-084,RetailPlus,Product Analyst,LinkedIn,8/24/2026,Offer,,,https://portfolio.example.com/p1,,8/24/2026 10:43
+APP-085,CloudCore,Junior Data Analyst,SEEK,7/17/2026,Applied,,Cover Letter v1.0,,,7/17/2026 10:21
+APP-086,CloudCore,Business Analyst,Indeed,7/13/2026,Offer,Resume v1.1,,https://portfolio.example.com/p3,https://github.com/demo-user/jobtrack-sample-086,7/13/2026 10:12
+APP-087,Deloitte Australia,Junior Data Analyst,LinkedIn,7/15/2026,Applied,Resume v1.1,,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-087,7/15/2026 10:10
+APP-088,RetailPlus,IT Support Specialist,Company Website,7/11/2026,Interview,Resume v1.0,Cover Letter v1.1,,,7/11/2026 10:47
+APP-089,RetailPlus,Backend Developer,SEEK,7/30/2026,Withdrawn,Resume v1.1,,,https://github.com/demo-user/jobtrack-sample-089,7/30/2026 10:37
+APP-090,REA Group,Data Analyst,SEEK,8/11/2026,Applied,Resume v2.0,,,https://github.com/demo-user/jobtrack-sample-090,8/11/2026 10:28
+APP-091,Insight Analytics,Software Engineer,LinkedIn,7/11/2026,Applied,Resume v1.1,Cover Letter v1.0,,,7/11/2026 10:29
+APP-092,CanvaWorks,Software Engineer,Indeed,7/3/2026,Applied,Resume v2.0,,,https://github.com/demo-user/jobtrack-sample-092,7/3/2026 10:33
+APP-093,BlueSky Software,Frontend Developer,Company Website,9/6/2026,Rejected,Resume v2.0,Cover Letter v1.0,,,9/6/2026 10:45
+APP-094,DataWorks Australia,IT Support Specialist,Indeed,9/1/2026,Rejected,Resume v2.0,Cover Letter v1.1,https://portfolio.example.com/p11,https://github.com/demo-user/jobtrack-sample-094,9/1/2026 10:14
+APP-095,HealthTech Labs,Junior Software Developer,LinkedIn,8/1/2026,Archived,Resume v2.0,Cover Letter v1.0,https://portfolio.example.com/p12,https://github.com/demo-user/jobtrack-sample-095,8/1/2026 10:20
+APP-096,Accenture Australia,Data Analyst,LinkedIn,9/5/2026,Applied,Resume v1.1,Cover Letter v1.0,,,9/5/2026 10:54
+APP-097,RetailPlus,IT Support Specialist,Indeed,9/9/2026,Offer,Resume v2.0,Cover Letter v1.0,https://portfolio.example.com/p2,,9/9/2026 10:38
+APP-098,TechNova Solutions,Software Engineer,LinkedIn,8/13/2026,Withdrawn,Resume v1.0,,https://portfolio.example.com/p3,https://github.com/demo-user/jobtrack-sample-098,8/13/2026 10:47
+APP-099,Telstra Technology,QA Tester,Company Website,7/7/2026,Applied,Resume v2.0,,https://portfolio.example.com/p4,https://github.com/demo-user/jobtrack-sample-099,7/7/2026 10:46
+APP-100,HealthTech Labs,Frontend Developer,Indeed,8/10/2026,Applied,,,,https://github.com/demo-user/jobtrack-sample-100,8/10/2026 10:37
