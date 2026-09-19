@@ -1,3 +1,4 @@
+using JobTrack.Modules.Documents.Entities;
 using JobTrack.Modules.JobApplication.Enums;
 using JobTrack.Modules.Users.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,11 @@ public sealed class JobApplicationConfiguration : IEntityTypeConfiguration<JobAp
             .WithMany()
             .HasForeignKey(application => application.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(application => application.Resume)
+            .WithMany()
+            .HasForeignKey(application => application.ResumeId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(application => application.UserId);
         builder.HasIndex(application => new { application.UserId, application.CurrentStatus });

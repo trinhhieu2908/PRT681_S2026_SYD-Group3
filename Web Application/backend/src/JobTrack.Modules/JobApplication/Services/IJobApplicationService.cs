@@ -10,7 +10,7 @@ public interface IJobApplicationService
         CreateJobApplicationRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<JobApplicationResponse> GetByIdAsync(
+    Task<JobApplicationDetailResponse> GetByIdAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default);
@@ -18,6 +18,12 @@ public interface IJobApplicationService
     Task<PagedResult<JobApplicationResponse>> GetAllAsync(
         Guid userId,
         GetJobApplicationsRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<JobApplicationResponse> UpdateAsync(
+        Guid id,
+        Guid userId,
+        UpdateJobApplicationRequest request,
         CancellationToken cancellationToken = default);
 
     Task<JobApplicationResponse> UpdateStatusAsync(

@@ -1,10 +1,12 @@
 using JobTrack.Common.Exceptions;
 using JobTrack.Common.Pagination;
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Modules.Documents.Contracts;
 using JobTrack.Modules.JobApplication.Contracts;
 using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.JobApplication.Enums;
 using JobTrack.Modules.JobApplication.Repositories;
+using JobTrack.Modules.Storage.Services;
 using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
 
 namespace JobTrack.Modules.JobApplication.Services;
@@ -12,6 +14,7 @@ namespace JobTrack.Modules.JobApplication.Services;
 public sealed class JobApplicationService(
     IJobApplicationRepository jobApplicationRepository,
     IJobApplicationStatusHistoryRepository statusHistoryRepository,
+    IStorageService storageService,
     IUnitOfWork unitOfWork)
     : IJobApplicationService
 {
@@ -43,7 +46,7 @@ public sealed class JobApplicationService(
         return MapResponse(application);
     }
 
-    public async Task<JobApplicationResponse> GetByIdAsync(
+    public async Task<JobApplicationDetailResponse> GetByIdAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default)
@@ -54,7 +57,7 @@ public sealed class JobApplicationService(
             cancellationToken)
             ?? throw new NotFoundException("Job application was not found.");
 
-        return MapResponse(jobApplication);
+        return await MapDetailResponseAsync(jobApplication, cancellationToken);
     }
 
     public async Task<PagedResult<JobApplicationResponse>> GetAllAsync(
@@ -113,6 +116,69 @@ public sealed class JobApplicationService(
             request.PageNumber,
             request.PageSize,
             totalCount);
+    }
+
+    public async Task<JobApplicationResponse> UpdateAsync(
+        Guid id,
+        Guid userId,
+        UpdateJobApplicationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var jobApplication = await GetForUpdateAsync(id, userId, cancellationToken);
+        var hasChanges = false;
+
+        if (request.CompanyName is not null)
+        {
+            jobApplication.CompanyName = ValidateRequired(
+                request.CompanyName,
+                150,
+                "Company name");
+            hasChanges = true;
+        }
+
+        if (request.RoleTitle is not null)
+        {
+            jobApplication.RoleTitle = ValidateRequired(request.RoleTitle, 150, "Role title");
+            hasChanges = true;
+        }
+
+        if (request.Platform is not null)
+        {
+            jobApplication.Platform = ValidateRequired(request.Platform, 50, "Platform");
+            hasChanges = true;
+        }
+
+        if (request.ApplicationDate.HasValue)
+        {
+            jobApplication.ApplicationDate = request.ApplicationDate.Value;
+            hasChanges = true;
+        }
+
+        if (request.JobLink is not null)
+        {
+            jobApplication.JobLink = NormalizeOptional(request.JobLink);
+            hasChanges = true;
+        }
+
+        if (request.PortfolioLink is not null)
+        {
+            jobApplication.PortfolioLink = NormalizeOptional(request.PortfolioLink);
+            hasChanges = true;
+        }
+
+        if (request.GitHubLink is not null)
+        {
+            jobApplication.GitHubLink = NormalizeOptional(request.GitHubLink);
+            hasChanges = true;
+        }
+
+        if (hasChanges)
+        {
+            jobApplication.UpdatedAtUtc = DateTime.UtcNow;
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        return MapResponse(jobApplication);
     }
 
     public async Task<JobApplicationResponse> UpdateStatusAsync(
@@ -246,6 +312,61 @@ public sealed class JobApplicationService(
             application.JobLink,
             application.PortfolioLink,
             application.GitHubLink,
+            application.CreatedAtUtc,
+            application.UpdatedAtUtc);
+    }
+
+    private async Task<JobApplicationDetailResponse> MapDetailResponseAsync(
+        JobApplicationEntity application,
+        CancellationToken cancellationToken)
+    {
+        ResumeResponse? resume = null;
+        if (application.Resume is not null)
+        {
+            var presignedUrl = await storageService.GetPresignedUrlAsync(
+                application.Resume.ObjectKey,
+                cancellationToken);
+
+            resume = new ResumeResponse(
+                application.Resume.Id,
+                application.Resume.FileName,
+                application.Resume.ObjectKey,
+                application.Resume.ContentType,
+                presignedUrl,
+                application.Resume.CreatedAtUtc,
+                application.Resume.UpdatedAtUtc);
+        }
+
+        CoverLetterResponse? coverLetter = null;
+        if (application.CoverLetter is not null)
+        {
+            var presignedUrl = await storageService.GetPresignedUrlAsync(
+                application.CoverLetter.ObjectKey,
+                cancellationToken);
+
+            coverLetter = new CoverLetterResponse(
+                application.CoverLetter.Id,
+                application.CoverLetter.JobApplicationId,
+                application.CoverLetter.FileName,
+                application.CoverLetter.ObjectKey,
+                application.CoverLetter.ContentType,
+                presignedUrl,
+                application.CoverLetter.CreatedAtUtc,
+                application.CoverLetter.UpdatedAtUtc);
+        }
+
+        return new JobApplicationDetailResponse(
+            application.Id,
+            application.CompanyName,
+            application.RoleTitle,
+            application.Platform,
+            application.ApplicationDate,
+            application.CurrentStatus,
+            application.JobLink,
+            application.PortfolioLink,
+            application.GitHubLink,
+            resume,
+            coverLetter,
             application.CreatedAtUtc,
             application.UpdatedAtUtc);
     }

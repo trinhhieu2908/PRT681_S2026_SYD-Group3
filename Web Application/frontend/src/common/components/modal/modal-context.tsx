@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 
 export const MODAL_VIEWS = {
   CREATE_JOB_APPLICATION: "CREATE_JOB_APPLICATION",
+  PREVIEW_DOCUMENT: "PREVIEW_DOCUMENT",
 } as const;
 
 export type MODAL_VIEWS = (typeof MODAL_VIEWS)[keyof typeof MODAL_VIEWS];

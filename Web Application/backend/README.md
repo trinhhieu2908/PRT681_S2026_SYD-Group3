@@ -155,6 +155,172 @@ Authorization: Bearer <access-token>
 The API returns `404 Not Found` when the record does not exist or belongs to a
 different user.
 
+Update an owned job application's editable fields:
+
+```http
+PUT /api/job-applications/{id}
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "companyName": "Example Company",
+  "roleTitle": "Senior Software Developer",
+  "platform": "LinkedIn",
+  "applicationDate": "2026-09-13",
+  "jobLink": "https://example.com/jobs/senior-software-developer",
+  "portfolioLink": "https://example.com/portfolio",
+  "gitHubLink": "https://github.com/example"
+}
+```
+
+Every property is optional. Only non-null properties are updated, while omitted
+or `null` properties leave their current values unchanged. An empty string can
+be used to clear an optional link. Status and attached documents are changed
+through their dedicated endpoints.
+
+## S3 Document Upload URLs
+
+S3 credentials are stored with .NET User Secrets for local development and are
+not written to `appsettings.json` or committed to Git. Configure them from the
+`backend` directory:
+
+```bash
+dotnet user-secrets set "S3:AccessKey" "<aws-access-key>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+
+dotnet user-secrets set "S3:SecretKey" "<aws-secret-key>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+
+dotnet user-secrets set "S3:BucketName" "<s3-bucket-name>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+The default region is `ap-southeast-2`. Change it when the bucket is in another
+region:
+
+```bash
+dotnet user-secrets set "S3:Region" "<aws-region>" \
+  --project src/JobTrack.Api/JobTrack.Api.csproj
+```
+
+Generate one or more authenticated upload URLs:
+
+```http
+POST /api/storage/upload-presigned-urls
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "context": "resume",
+  "fileNames": [
+    "resume-v1.pdf",
+    "resume-v2.docx"
+  ]
+}
+```
+
+`context` must be `resume` or `cover-letter`. Each request accepts between 1
+and 10 PDF, DOC, or DOCX filenames. The authenticated user ID is taken from the
+JWT and used to create keys such as:
+
+```text
+{userId}/resume/resume-v1.pdf
+{userId}/cover-letter/cover-letter-v1_A7kP2xM9Qz.pdf
+```
+
+Resume filenames are case-sensitive and unique per user. For example, `cv.pdf`
+and `CV.pdf` are different versions. The presign endpoint returns `409 Conflict`
+when the same user already has the exact resume filename. Cover-letter keys
+always receive a new cryptographically generated 10-character suffix.
+
+Upload each file directly to its `uploadUrl` with the returned `httpMethod` and
+`Content-Type`. Keep the returned `objectKey`; the later document-record API
+will store that key rather than the temporary URL.
+
+After a resume upload succeeds, create its database record and attach it to an
+owned job application in the same transaction:
+
+```http
+POST /api/resumes
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "jobApplicationId": "<job-application-id>",
+  "fileName": "resume-v1.pdf",
+  "objectKey": "<object-key-from-presign-response>",
+  "contentType": "application/pdf"
+}
+```
+
+The resume save endpoint checks exact filename uniqueness again. It returns
+`409 Conflict` when the version already exists and `404 Not Found` when the job
+application does not exist or belongs to another user.
+
+List the authenticated user's saved resume versions:
+
+```http
+GET /api/resumes
+Authorization: Bearer <access-token>
+```
+
+Attach one of those existing resumes to an owned job application:
+
+```http
+PUT /api/job-applications/{jobApplicationId}/resume
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "resumeId": "<existing-resume-id>"
+}
+```
+
+The API returns `404 Not Found` when either the application or resume does not
+exist for the authenticated user. Attaching a resume replaces the application's
+previous resume selection; the reusable resume record itself is unchanged.
+
+After a cover-letter upload succeeds, create or replace the one cover letter
+associated with an owned job application:
+
+```http
+PUT /api/job-applications/{jobApplicationId}/cover-letter
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "fileName": "cover-letter-v1.pdf",
+  "objectKey": "<object-key-from-presign-response>",
+  "contentType": "application/pdf"
+}
+```
+
+The application detail endpoint returns `resume: null` or `coverLetter: null`
+when a document is not recorded. Otherwise, it returns the saved document
+metadata, including a temporary `presignedUrl` for an authenticated S3 `GET`
+request. Resume list, save, attach, and cover-letter save responses also include
+this URL. The frontend can use it to view or download the file without receiving
+AWS credentials.
+
+Download URLs expire after 15 minutes by default. The database stores only the
+stable `objectKey`; a fresh URL is generated whenever document metadata is
+returned. Configure the lifetime with `S3:DownloadUrlExpiryMinutes` in
+`appsettings.json`.
+
+The S3 bucket must allow browser `GET` and `PUT` requests from the frontend
+origin. A development CORS rule can use:
+
+```json
+[
+  {
+    "AllowedOrigins": ["http://localhost:5173"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "ExposeHeaders": ["ETag"]
+  }
+]
+```
+
 ## Create and Apply EF Core Migration
 
 Install the EF CLI if it is not already installed:

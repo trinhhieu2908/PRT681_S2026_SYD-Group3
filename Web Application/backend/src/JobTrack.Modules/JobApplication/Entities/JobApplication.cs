@@ -1,4 +1,5 @@
 using JobTrack.Core.Entities;
+using JobTrack.Modules.Documents.Entities;
 using JobTrack.Modules.JobApplication.Enums;
 
 namespace JobTrack.Modules.JobApplication.Entities;
@@ -22,4 +23,10 @@ public sealed class JobApplication : BaseEntity
     public string? PortfolioLink { get; set; }
 
     public string? GitHubLink { get; set; }
+
+    public Guid? ResumeId { get; set; }
+
+    public Resume? Resume { get; set; }
+
+    public CoverLetter? CoverLetter { get; set; }
 }

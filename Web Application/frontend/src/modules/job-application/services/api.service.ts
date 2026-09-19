@@ -3,18 +3,21 @@ import { JOB_APPLICATION_API } from "@/common/constants/api-endpoints";
 import {
   CreateJobApplicationRequest,
   GetJobApplicationsRequest,
+  UpdateJobApplicationRequest,
   UpdateJobApplicationStatusRequest,
 } from "@/modules/job-application/model/requests";
 import {
+  JobApplicationDetailResponse,
   JobApplicationResponse,
   PagedJobApplicationsResponse,
 } from "@/modules/job-application/model/responses";
 
 export const jobApplicationApi = {
-  getById: async (id: string): Promise<JobApplicationResponse> => {
-    return axiosClient.get<JobApplicationResponse, JobApplicationResponse>(
-      `${JOB_APPLICATION_API.root}/${id}`,
-    );
+  getById: async (id: string): Promise<JobApplicationDetailResponse> => {
+    return axiosClient.get<
+      JobApplicationDetailResponse,
+      JobApplicationDetailResponse
+    >(`${JOB_APPLICATION_API.root}/${id}`);
   },
 
   getAll: async (
@@ -36,6 +39,17 @@ export const jobApplicationApi = {
       JobApplicationResponse,
       CreateJobApplicationRequest
     >(JOB_APPLICATION_API.root, request);
+  },
+
+  update: async (
+    id: string,
+    request: UpdateJobApplicationRequest,
+  ): Promise<JobApplicationResponse> => {
+    return axiosClient.put<
+      JobApplicationResponse,
+      JobApplicationResponse,
+      UpdateJobApplicationRequest
+    >(`${JOB_APPLICATION_API.root}/${id}`, request);
   },
 
   updateStatus: async (

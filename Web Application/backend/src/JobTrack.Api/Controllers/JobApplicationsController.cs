@@ -50,7 +50,7 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobApplicationResponse>> GetById(
+    public async Task<ActionResult<JobApplicationDetailResponse>> GetById(
         Guid id,
         CancellationToken cancellationToken)
     {
@@ -62,6 +62,26 @@ public sealed class JobApplicationsController(IJobApplicationService jobApplicat
         var response = await jobApplicationService.GetByIdAsync(
             id,
             userId,
+            cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<JobApplicationResponse>> Update(
+        Guid id,
+        UpdateJobApplicationRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await jobApplicationService.UpdateAsync(
+            id,
+            userId,
+            request,
             cancellationToken);
 
         return Ok(response);

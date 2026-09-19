@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useModalAction } from "@/common/components/modal/modal-context";
 import { Button } from "@/common/components/ui/button";
 import {
@@ -13,41 +12,11 @@ import {
 } from "@/common/components/ui/dialog";
 import { Input } from "@/common/components/ui/input";
 import { useCreateJobApplication } from "@/modules/job-application/hooks/useCreateJobApplication";
-import { CreateJobApplicationRequest } from "@/modules/job-application/model/requests";
-
-const optionalUrl = z
-  .string()
-  .trim()
-  .max(2048, { message: "URL cannot exceed 2048 characters" })
-  .refine(
-    (value) => value.length === 0 || z.string().url().safeParse(value).success,
-    { message: "Enter a valid URL" },
-  );
-
-const createJobApplicationSchema = z.object({
-  companyName: z
-    .string()
-    .trim()
-    .min(1, { message: "Company name is required" })
-    .max(150, { message: "Company name cannot exceed 150 characters" }),
-  roleTitle: z
-    .string()
-    .trim()
-    .min(1, { message: "Role title is required" })
-    .max(150, { message: "Role title cannot exceed 150 characters" }),
-  platform: z
-    .string()
-    .trim()
-    .min(1, { message: "Platform is required" })
-    .max(50, { message: "Platform cannot exceed 50 characters" }),
-  jobLink: optionalUrl,
-  portfolioLink: optionalUrl,
-  gitHubLink: optionalUrl,
-});
-
-type CreateJobApplicationFormValues = z.infer<
-  typeof createJobApplicationSchema
->;
+import type { CreateJobApplicationRequest } from "@/modules/job-application/model/requests";
+import {
+  createJobApplicationSchema,
+  type CreateJobApplicationFormValues,
+} from "@/modules/job-application/model/schemas";
 
 const toOptionalValue = (value: string): string | null =>
   value.length > 0 ? value : null;

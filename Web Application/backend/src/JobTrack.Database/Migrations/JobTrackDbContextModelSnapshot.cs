@@ -22,6 +22,97 @@ namespace JobTrack.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("JobTrack.Modules.Documents.Entities.CoverLetter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(127)
+                        .HasColumnType("character varying(127)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("JobApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ObjectKey")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobApplicationId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_cover_letter_JobApplicationId");
+
+                    b.HasIndex("ObjectKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_cover_letter_ObjectKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("cover_letter", (string)null);
+                });
+
+            modelBuilder.Entity("JobTrack.Modules.Documents.Entities.Resume", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(127)
+                        .HasColumnType("character varying(127)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("ObjectKey")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObjectKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_resume_ObjectKey");
+
+                    b.HasIndex("UserId", "FileName")
+                        .IsUnique()
+                        .HasDatabaseName("UX_resume_UserId_FileName");
+
+                    b.ToTable("resume", (string)null);
+                });
+
             modelBuilder.Entity("JobTrack.Modules.JobApplication.Entities.JobApplication", b =>
                 {
                     b.Property<Guid>("Id")
@@ -65,6 +156,9 @@ namespace JobTrack.Database.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
 
+                    b.Property<Guid?>("ResumeId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("RoleTitle")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -77,6 +171,8 @@ namespace JobTrack.Database.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ResumeId");
 
                     b.HasIndex("UserId");
 
@@ -166,13 +262,44 @@ namespace JobTrack.Database.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("JobTrack.Modules.JobApplication.Entities.JobApplication", b =>
+            modelBuilder.Entity("JobTrack.Modules.Documents.Entities.CoverLetter", b =>
+                {
+                    b.HasOne("JobTrack.Modules.JobApplication.Entities.JobApplication", null)
+                        .WithOne("CoverLetter")
+                        .HasForeignKey("JobTrack.Modules.Documents.Entities.CoverLetter", "JobApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobTrack.Modules.Users.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JobTrack.Modules.Documents.Entities.Resume", b =>
                 {
                     b.HasOne("JobTrack.Modules.Users.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("JobTrack.Modules.JobApplication.Entities.JobApplication", b =>
+                {
+                    b.HasOne("JobTrack.Modules.Documents.Entities.Resume", "Resume")
+                        .WithMany()
+                        .HasForeignKey("ResumeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("JobTrack.Modules.Users.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("JobTrack.Modules.JobApplication.Entities.JobApplicationStatusHistory", b =>
@@ -182,6 +309,11 @@ namespace JobTrack.Database.Migrations
                         .HasForeignKey("JobApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("JobTrack.Modules.JobApplication.Entities.JobApplication", b =>
+                {
+                    b.Navigation("CoverLetter");
                 });
 #pragma warning restore 612, 618
         }
