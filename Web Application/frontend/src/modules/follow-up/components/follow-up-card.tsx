@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/common/components/ui/button";
 import { formatDate } from "@/common/utils/date";
 import type { FollowUpCardData } from "@/modules/follow-up/model/responses";
+import { getFollowUpTiming } from "@/modules/follow-up/utils/date";
 import { routes } from "@/routes/routes";
 
 interface FollowUpCardProps {
@@ -39,6 +40,7 @@ const FollowUpCard = ({
           roleTitle: followUp.roleTitle,
         }
       : null;
+  const timing = getFollowUpTiming(followUp.dueDate, followUp.isOverdue);
 
   return (
     <article
@@ -142,14 +144,29 @@ const FollowUpCard = ({
             )}
           </div>
 
-          <p
-            className={`mt-2 inline-flex items-center gap-1.5 text-sm font-medium ${
-              followUp.isOverdue ? "text-rose-700" : "text-gray-600"
-            }`}
-          >
-            <CalendarDays className="h-4 w-4" />
-            Due {formatDate(`${followUp.dueDate}T00:00:00Z`, "long")}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <p
+              className={`inline-flex items-center gap-1.5 text-sm font-medium ${
+                followUp.isOverdue ? "text-rose-700" : "text-gray-600"
+              }`}
+            >
+              <CalendarDays className="h-4 w-4" />
+              {formatDate(`${followUp.dueDate}T00:00:00Z`, "long")}
+            </p>
+            {!isCompleted && (
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                  timing.urgency === "overdue"
+                    ? "bg-rose-100 text-rose-700"
+                    : timing.urgency === "today"
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-gray-100 text-gray-600"
+                }`}
+              >
+                {timing.label}
+              </span>
+            )}
+          </div>
 
           {followUp.notes && (
             <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-gray-600">

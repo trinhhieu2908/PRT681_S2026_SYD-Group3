@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  BellRing,
   CalendarClock,
   CalendarDays,
   RefreshCw,
@@ -10,9 +9,6 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/common/components/ui/button";
 import { Spinner } from "@/common/components/ui/spinner";
-import FollowUpCard from "@/modules/follow-up/components/follow-up-card";
-import { usePendingFollowUps } from "@/modules/follow-up/hooks/usePendingFollowUps";
-import { useUpdateFollowUpCompletion } from "@/modules/follow-up/hooks/useUpdateFollowUpCompletion";
 import InterviewCard from "@/modules/interview/components/interview-card";
 import { useUpcomingInterviews } from "@/modules/interview/hooks/useUpcomingInterviews";
 import type { UpcomingInterviewResponse } from "@/modules/interview/model/responses";
@@ -52,14 +48,6 @@ const InterviewPage = () => {
     error,
     refetch,
   } = useUpcomingInterviews(days);
-  const {
-    data: pendingFollowUps = [],
-    isPending: areFollowUpsPending,
-    error: followUpError,
-    refetch: refetchFollowUps,
-  } = usePendingFollowUps();
-  const { updateCompletion, updatingFollowUpId } =
-    useUpdateFollowUpCompletion();
 
   const groups = useMemo(() => {
     return data.reduce<
@@ -112,94 +100,6 @@ const InterviewPage = () => {
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section className="mt-8 overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sm">
-          <div className="flex flex-col gap-3 border-b border-gray-100 bg-gradient-to-r from-secondary-50/70 via-white to-primary-50/50 p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary-600 text-white">
-                <BellRing className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-secondary-700">
-                  Needs attention
-                </p>
-                <h2 className="mt-1 text-xl font-semibold text-gray-950">
-                  Open follow-ups
-                </h2>
-              </div>
-            </div>
-            {!areFollowUpsPending && !followUpError && (
-              <span className="self-start rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm ring-1 ring-gray-200 sm:self-auto">
-                {pendingFollowUps.length} open
-              </span>
-            )}
-          </div>
-
-          <div className="p-5 sm:p-6">
-            {areFollowUpsPending ? (
-              <div className="grid gap-3 lg:grid-cols-2">
-                {Array.from({ length: 2 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="h-36 animate-pulse rounded-2xl border border-gray-200 bg-gray-50"
-                  />
-                ))}
-              </div>
-            ) : followUpError ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-rose-100 bg-rose-50/50 px-5 py-8 text-center">
-                <p className="font-semibold text-gray-950">
-                  Follow-ups could not be loaded
-                </p>
-                <p className="mt-1 text-sm text-gray-600">
-                  {followUpError instanceof Error
-                    ? followUpError.message
-                    : "Please try again in a moment."}
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="mt-4 rounded-full"
-                  onClick={() => void refetchFollowUps()}
-                >
-                  <RefreshCw />
-                  Try again
-                </Button>
-              </div>
-            ) : pendingFollowUps.length === 0 ? (
-              <div className="flex items-center gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-5 py-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white">
-                  <BellRing className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-semibold text-emerald-950">
-                    You’re all caught up
-                  </p>
-                  <p className="mt-0.5 text-sm text-emerald-800">
-                    New follow-ups added to an application will appear here.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid items-start gap-3 lg:grid-cols-2">
-                {pendingFollowUps.map((followUp) => (
-                  <FollowUpCard
-                    key={followUp.id}
-                    followUp={followUp}
-                    showApplication
-                    onToggleCompletion={() =>
-                      updateCompletion({
-                        jobApplicationId: followUp.jobApplicationId,
-                        followUpId: followUp.id,
-                        isCompleted: true,
-                      })
-                    }
-                    isBusy={updatingFollowUpId === followUp.id}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         </section>
 

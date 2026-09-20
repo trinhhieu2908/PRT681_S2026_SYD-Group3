@@ -53,7 +53,7 @@ const FollowUpFormModal = () => {
   const {
     register,
     handleSubmit,
-    formState: { dirtyFields, errors },
+    formState: { dirtyFields, errors, isDirty },
   } = useForm<FollowUpFormValues>({
     resolver: zodResolver(followUpFormSchema),
     defaultValues: {
@@ -155,7 +155,7 @@ const FollowUpFormModal = () => {
             </p>
           )}
           <p className="text-xs text-gray-500">
-            Today is allowed; the backend blocks new dates in the past.
+            Choose today or a future date.
           </p>
         </div>
 
@@ -195,7 +195,7 @@ const FollowUpFormModal = () => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving || (isEditing && !isDirty)}>
             {isSaving && <Spinner size="sm" />}
             {isSaving
               ? "Saving..."

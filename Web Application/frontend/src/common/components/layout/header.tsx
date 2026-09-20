@@ -13,13 +13,17 @@ const Header = ({ onOpenSidebar }: HeaderProps) => {
   const isJobApplicationDetail =
     location.pathname.startsWith(`${routes.jobApplicationsPath}/`) &&
     location.pathname !== routes.jobApplicationsPath;
-  const pageTitle = isJobApplicationDetail
-    ? "Application details"
-    : location.pathname === routes.jobApplicationsPath
-      ? "Job applications"
-      : location.pathname === routes.interviewsPath
-        ? "Interviews"
-        : "Dashboard";
+  let pageTitle = "Dashboard";
+
+  if (isJobApplicationDetail) {
+    pageTitle = "Application details";
+  } else if (location.pathname === routes.jobApplicationsPath) {
+    pageTitle = "Job applications";
+  } else if (location.pathname === routes.interviewsPath) {
+    pageTitle = "Interviews";
+  } else if (location.pathname === routes.followUpsPath) {
+    pageTitle = "Follow-ups";
+  }
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">

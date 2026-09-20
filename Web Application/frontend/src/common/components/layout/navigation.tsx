@@ -3,6 +3,7 @@ import {
   BriefcaseBusiness,
   CalendarClock,
   LayoutDashboard,
+  ListChecks,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -31,6 +32,12 @@ const Navigation = ({ onNavigate }: NavigationProps) => {
       icon: CalendarClock,
       path: routes.interviewsPath,
       active: location.pathname.startsWith(routes.interviewsPath),
+    },
+    {
+      name: "Follow-ups",
+      icon: ListChecks,
+      path: routes.followUpsPath,
+      active: location.pathname.startsWith(routes.followUpsPath),
     },
   ];
 
