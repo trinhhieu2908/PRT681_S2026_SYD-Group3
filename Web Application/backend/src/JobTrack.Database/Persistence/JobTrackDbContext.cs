@@ -1,5 +1,6 @@
 using JobTrack.Core.UnitOfWork;
 using JobTrack.Modules.Documents.Entities;
+using JobTrack.Modules.Interviews.Entities;
 using JobTrack.Modules.JobApplication.Entities;
 using JobTrack.Modules.Users.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ public class JobTrackDbContext(DbContextOptions<JobTrackDbContext> options)
     public DbSet<Resume> Resumes => Set<Resume>();
 
     public DbSet<CoverLetter> CoverLetters => Set<CoverLetter>();
+
+    public DbSet<Interview> Interviews => Set<Interview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

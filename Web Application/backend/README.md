@@ -104,7 +104,7 @@ Email uniqueness is case-insensitive.
 
 ## Job Application Endpoints
 
-Both endpoints require a valid JWT access token.
+All endpoints require a valid JWT access token.
 
 Create a job application:
 
@@ -177,6 +177,55 @@ Every property is optional. Only non-null properties are updated, while omitted
 or `null` properties leave their current values unchanged. An empty string can
 be used to clear an optional link. Status and attached documents are changed
 through their dedicated endpoints.
+
+## Interview Endpoints
+
+Create an interview for an owned job application:
+
+```http
+POST /api/job-applications/{jobApplicationId}/interviews
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "title": "Second-round interview",
+  "interviewType": "Technical",
+  "scheduledAtUtc": "2026-09-25T04:00:00Z",
+  "location": null,
+  "meetingLink": "https://meet.example.com/interview",
+  "contactName": "Alex Recruiter",
+  "contactEmail": "alex@example.com",
+  "contactPhone": "+61 400 000 000",
+  "notes": "Review the system design exercise."
+}
+```
+
+`scheduledAtUtc` accepts a timestamp with an offset and is stored in UTC.
+Contact fields, location, meeting link, and notes are optional. Interview type
+is user-entered text, and multiple interviews can belong to one application.
+
+The application detail UI can manage interviews through:
+
+```text
+GET    /api/job-applications/{jobApplicationId}/interviews
+GET    /api/job-applications/{jobApplicationId}/interviews/{interviewId}
+PATCH  /api/job-applications/{jobApplicationId}/interviews/{interviewId}
+DELETE /api/job-applications/{jobApplicationId}/interviews/{interviewId}
+```
+
+The update request is partial: omitted or `null` properties are unchanged.
+Each endpoint returns `404 Not Found` when the application or interview does
+not belong to the authenticated user.
+
+Get interviews occurring during the next seven days for the dashboard:
+
+```http
+GET /api/interviews/upcoming?days=7
+Authorization: Bearer <access-token>
+```
+
+`days` defaults to `7` and must be between `1` and `30`. Results are ordered by
+scheduled time and include the application company name and role title.
 
 ## S3 Document Upload URLs
 
@@ -297,7 +346,7 @@ Authorization: Bearer <access-token>
 
 The application detail endpoint returns `resume: null` or `coverLetter: null`
 when a document is not recorded. Otherwise, it returns the saved document
-metadata, including a temporary `presignedUrl` for an authenticated S3 `GET`
+metadata, including a temporary `url` for an authenticated S3 `GET`
 request. Resume list, save, attach, and cover-letter save responses also include
 this URL. The frontend can use it to view or download the file without receiving
 AWS credentials.
