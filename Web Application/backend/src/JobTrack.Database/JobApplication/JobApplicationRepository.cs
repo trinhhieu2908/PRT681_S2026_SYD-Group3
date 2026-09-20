@@ -1,4 +1,5 @@
 using JobTrack.Database.Persistence;
+using JobTrack.Modules.JobApplication.Enums;
 using JobTrack.Modules.JobApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 using JobApplicationEntity = JobTrack.Modules.JobApplication.Entities.JobApplication;
@@ -70,6 +71,11 @@ public sealed class JobApplicationRepository(JobTrackDbContext dbContext)
         {
             databaseQuery = databaseQuery.Where(
                 jobApplication => jobApplication.CurrentStatus == query.Status.Value);
+        }
+        else
+        {
+            databaseQuery = databaseQuery.Where(
+                jobApplication => jobApplication.CurrentStatus != JobApplicationStatus.Archived);
         }
 
         if (query.Platform is not null)
