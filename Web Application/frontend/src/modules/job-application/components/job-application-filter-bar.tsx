@@ -185,10 +185,10 @@ const JobApplicationFilterBar = ({
                   id="job-application-status"
                   className="rounded-xl bg-white"
                 >
-                  <SelectValue placeholder="All statuses" />
+                  <SelectValue placeholder="All active statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="all">All active statuses</SelectItem>
                   {statuses.map((status) => (
                     <SelectItem key={status} value={status}>
                       {status}
