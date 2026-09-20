@@ -227,6 +227,63 @@ Authorization: Bearer <access-token>
 `days` defaults to `7` and must be between `1` and `30`. Results are ordered by
 scheduled time and include the application company name and role title.
 
+## Follow-Up Endpoints
+
+Create a manual follow-up for an owned job application:
+
+```http
+POST /api/job-applications/{jobApplicationId}/follow-ups
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "title": "Email the recruiter",
+  "dueDate": "2026-09-25",
+  "notes": "Ask whether the technical interview has been scheduled."
+}
+```
+
+`dueDate` is a date-only value. Today and future dates are allowed; a past date
+is rejected. Follow-ups are entered manually and no suggestion is generated.
+
+The application detail UI can manage follow-ups through:
+
+```text
+GET    /api/job-applications/{jobApplicationId}/follow-ups
+GET    /api/job-applications/{jobApplicationId}/follow-ups/{followUpId}
+PATCH  /api/job-applications/{jobApplicationId}/follow-ups/{followUpId}
+DELETE /api/job-applications/{jobApplicationId}/follow-ups/{followUpId}
+```
+
+The update request is partial. Omitted or `null` properties are unchanged, and
+an empty notes value clears the existing notes.
+
+Mark a follow-up complete or reopen it:
+
+```http
+PATCH /api/job-applications/{jobApplicationId}/follow-ups/{followUpId}/completion
+Content-Type: application/json
+Authorization: Bearer <access-token>
+
+{
+  "isCompleted": true
+}
+```
+
+Completion records `completedAtUtc`; reopening clears it. Every response
+contains a live `isOverdue` value. A follow-up is overdue only when it is not
+completed and its due date is earlier than the current UTC date. A due date of
+today is not overdue.
+
+Get all incomplete follow-ups for the dashboard:
+
+```http
+GET /api/follow-ups/pending
+Authorization: Bearer <access-token>
+```
+
+Results are ordered by due date and include company name and role title.
+
 ## S3 Document Upload URLs
 
 S3 credentials are stored with .NET User Secrets for local development and are
