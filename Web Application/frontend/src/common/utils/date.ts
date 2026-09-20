@@ -139,6 +139,16 @@ export const formatDate = (
           timeZone,
         });
 
+      case "datetime-short":
+        return date.toLocaleString(locale, {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone,
+        });
+
       case "datetime-compact":
         const time = date.toLocaleTimeString(locale, {
           hour: "2-digit",

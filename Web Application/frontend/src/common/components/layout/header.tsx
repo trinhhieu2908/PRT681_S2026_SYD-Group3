@@ -17,7 +17,9 @@ const Header = ({ onOpenSidebar }: HeaderProps) => {
     ? "Application details"
     : location.pathname === routes.jobApplicationsPath
       ? "Job applications"
-      : "Dashboard";
+      : location.pathname === routes.interviewsPath
+        ? "Interviews"
+        : "Dashboard";
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">

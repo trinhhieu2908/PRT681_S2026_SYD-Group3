@@ -20,3 +20,21 @@ export const RESUME_API = {
 export const STORAGE_API = {
   uploadPresignedUrls: "/storage/upload-presigned-urls",
 };
+
+export const INTERVIEW_API = {
+  upcoming: "/interviews/upcoming",
+  byApplication: (jobApplicationId: string) =>
+    `/job-applications/${jobApplicationId}/interviews`,
+  byId: (jobApplicationId: string, interviewId: string) =>
+    `/job-applications/${jobApplicationId}/interviews/${interviewId}`,
+};
+
+export const FOLLOW_UP_API = {
+  pending: "/follow-ups/pending",
+  byApplication: (jobApplicationId: string) =>
+    `/job-applications/${jobApplicationId}/follow-ups`,
+  byId: (jobApplicationId: string, followUpId: string) =>
+    `/job-applications/${jobApplicationId}/follow-ups/${followUpId}`,
+  completion: (jobApplicationId: string, followUpId: string) =>
+    `/job-applications/${jobApplicationId}/follow-ups/${followUpId}/completion`,
+};

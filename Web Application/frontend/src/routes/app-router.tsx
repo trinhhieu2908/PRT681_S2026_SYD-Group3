@@ -12,6 +12,7 @@ const JobApplicationPage = lazy(
 const JobApplicationDetailPage = lazy(
   () => import("@/pages/job-application/job-application-detail-page"),
 );
+const InterviewPage = lazy(() => import("@/pages/interview/interview-page"));
 const NotFoundPage = lazy(() => import("@/pages/not-found/not-found-page"));
 
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: routes.jobApplicationDetailPath,
         element: <JobApplicationDetailPage />,
+      },
+      {
+        path: routes.interviewsPath,
+        element: <InterviewPage />,
       },
       {
         path: "*",

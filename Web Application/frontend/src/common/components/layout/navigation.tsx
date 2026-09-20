@@ -1,5 +1,9 @@
 import { routes } from "@/routes/routes";
-import { BriefcaseBusiness, LayoutDashboard } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  CalendarClock,
+  LayoutDashboard,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface NavigationProps {
@@ -21,6 +25,12 @@ const Navigation = ({ onNavigate }: NavigationProps) => {
       icon: BriefcaseBusiness,
       path: routes.jobApplicationsPath,
       active: location.pathname.startsWith(routes.jobApplicationsPath),
+    },
+    {
+      name: "Interviews",
+      icon: CalendarClock,
+      path: routes.interviewsPath,
+      active: location.pathname.startsWith(routes.interviewsPath),
     },
   ];
 

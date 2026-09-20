@@ -11,6 +11,8 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "@/common/components/ui/button";
 import { formatDate } from "@/common/utils/date";
 import JobApplicationDocuments from "@/modules/document/components/job-application-documents";
+import JobApplicationFollowUps from "@/modules/follow-up/components/job-application-follow-ups";
+import JobApplicationInterviews from "@/modules/interview/components/job-application-interviews";
 import InlineEditableField from "@/modules/job-application/components/inline-editable-field";
 import JobApplicationStatusBadge from "@/modules/job-application/components/job-application-status-badge";
 import JobApplicationStatusControl from "@/modules/job-application/components/job-application-status-control";
@@ -251,6 +253,10 @@ const JobApplicationDetailPage = () => {
           />
 
           <div className="space-y-6 lg:col-start-1 lg:row-start-1">
+            <JobApplicationInterviews jobApplicationId={data.id} />
+
+            <JobApplicationFollowUps jobApplicationId={data.id} />
+
             <JobApplicationDocuments application={data} />
 
             <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
