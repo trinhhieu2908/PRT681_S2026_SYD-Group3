@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { JOB_APPLICATION_QUERY_KEY } from "@/modules/job-application/hooks/useJobApplications";
 import type {
   JobApplicationEditableField,
@@ -34,6 +35,7 @@ export const useUpdateJobApplication = (id: string) => {
         queryKey: JOB_APPLICATION_QUERY_KEY,
         predicate: (query) => !query.queryKey.includes("detail"),
       });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success("Application detail updated.");
     },
     onError: (error: Error) => {

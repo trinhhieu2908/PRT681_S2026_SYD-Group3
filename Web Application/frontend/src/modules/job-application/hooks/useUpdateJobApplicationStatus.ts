@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { JOB_APPLICATION_QUERY_KEY } from "@/modules/job-application/hooks/useJobApplications";
 import { UpdateJobApplicationStatusRequest } from "@/modules/job-application/model/requests";
 import {
@@ -29,6 +30,7 @@ export const useUpdateJobApplicationStatus = (id: string) => {
       void queryClient.invalidateQueries({
         queryKey: JOB_APPLICATION_QUERY_KEY,
       });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success(`Application moved to ${application.currentStatus}.`);
     },
     onError: (error: Error) => {

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { interviewQueryKeys } from "@/modules/interview/hooks/query-keys";
 import type { CreateInterviewRequest } from "@/modules/interview/model/requests";
 import { interviewApi } from "@/modules/interview/services/api.service";
@@ -21,6 +22,7 @@ export const useCreateInterview = (
       void queryClient.invalidateQueries({
         queryKey: interviewQueryKeys.all,
       });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success(`${interview.title} added.`);
       options.onSuccess?.();
     },

@@ -38,3 +38,7 @@ export const FOLLOW_UP_API = {
   completion: (jobApplicationId: string, followUpId: string) =>
     `/job-applications/${jobApplicationId}/follow-ups/${followUpId}/completion`,
 };
+
+export const DASHBOARD_API = {
+  summary: "/dashboard/summary",
+};

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { interviewQueryKeys } from "@/modules/interview/hooks/query-keys";
 import { interviewApi } from "@/modules/interview/services/api.service";
 
@@ -13,6 +14,7 @@ export const useDeleteInterview = (jobApplicationId: string) => {
       void queryClient.invalidateQueries({
         queryKey: interviewQueryKeys.all,
       });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success("Interview deleted.");
     },
     onError: (error: Error) => {

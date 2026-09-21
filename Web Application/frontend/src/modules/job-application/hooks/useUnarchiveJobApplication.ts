@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { JOB_APPLICATION_QUERY_KEY } from "@/modules/job-application/hooks/useJobApplications";
 import {
   JobApplicationDetailResponse,
@@ -27,6 +28,7 @@ export const useUnarchiveJobApplication = (id: string) => {
       void queryClient.invalidateQueries({
         queryKey: JOB_APPLICATION_QUERY_KEY,
       });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success(`Application restored to ${application.currentStatus}.`);
     },
     onError: (error: Error) => {

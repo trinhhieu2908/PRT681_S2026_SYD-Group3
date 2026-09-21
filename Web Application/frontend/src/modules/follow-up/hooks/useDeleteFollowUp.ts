@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
 import { followUpQueryKeys } from "@/modules/follow-up/hooks/query-keys";
 import { followUpApi } from "@/modules/follow-up/services/api.service";
 
@@ -11,6 +12,7 @@ export const useDeleteFollowUp = (jobApplicationId: string) => {
     retry: false,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: followUpQueryKeys.all });
+      void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
       toast.success("Follow-up deleted.");
     },
     onError: (error: Error) => toast.error(error.message),
