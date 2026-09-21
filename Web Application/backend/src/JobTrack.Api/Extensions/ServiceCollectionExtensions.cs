@@ -5,6 +5,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using JobTrack.Core.UnitOfWork;
+using JobTrack.Database.Dashboard;
 using JobTrack.Database.Documents;
 using JobTrack.Database.FollowUps;
 using JobTrack.Database.Interviews;
@@ -14,6 +15,8 @@ using JobTrack.Database.Persistence;
 using JobTrack.Database.Repositories;
 using JobTrack.Modules.Auth.Configuration;
 using JobTrack.Modules.Auth.Services;
+using JobTrack.Modules.Dashboard.Repositories;
+using JobTrack.Modules.Dashboard.Services;
 using JobTrack.Modules.Documents.Repositories;
 using JobTrack.Modules.Documents.Services;
 using JobTrack.Modules.FollowUps.Repositories;
@@ -87,7 +90,9 @@ public static class ServiceCollectionExtensions
         services.AddAuthentication(configuration);
         services.AddStorage(configuration);
         services.AddAuthorization();
+        services.AddSingleton(TimeProvider.System);
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDocumentService, DocumentService>();
         services.AddScoped<IFollowUpService, FollowUpService>();
         services.AddScoped<IInterviewService, InterviewService>();
@@ -189,6 +194,7 @@ public static class ServiceCollectionExtensions
             serviceProvider.GetRequiredService<JobTrackDbContext>());
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IResumeRepository, ResumeRepository>();
         services.AddScoped<ICoverLetterRepository, CoverLetterRepository>();
         services.AddScoped<IFollowUpRepository, FollowUpRepository>();
