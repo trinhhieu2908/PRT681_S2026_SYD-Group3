@@ -13,6 +13,7 @@ export const useRegister = ({ onSuccess }: UseRegisterOptions = {}) => {
     error,
   } = useMutation({
     mutationFn: authApi.register,
+    retry: false,
     onSuccess: () => {
       toast.success("Account created. Please sign in.");
       onSuccess?.();
