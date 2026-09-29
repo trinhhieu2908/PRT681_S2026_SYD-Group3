@@ -1,4 +1,5 @@
 import { extractUserFromToken } from "@/common/utils/jwt";
+import { queryClient } from "@/clients/query-client";
 import { AuthenticatedUser } from "@/modules/auth/model/user";
 import { LoginResponse } from "@/modules/auth/model/responses";
 import { authService } from "@/modules/auth/services/auth.service";
@@ -33,12 +34,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const clearAuthState = useCallback(() => {
     authService.clearSession();
+    queryClient.clear();
     setIsAuthenticated(false);
     setUser(null);
   }, []);
 
   const logout = useCallback(async () => {
     await authService.logout();
+    queryClient.clear();
     setIsAuthenticated(false);
     setUser(null);
   }, []);
@@ -76,6 +79,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [clearAuthState]);
 
   const login = useCallback((response: LoginResponse) => {
+    queryClient.clear();
     authService.saveTokens(response.tokens);
     setIsAuthenticated(true);
     setUser({
