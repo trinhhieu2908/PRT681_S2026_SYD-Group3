@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { dashboardQueryKeys } from "@/modules/dashboard/hooks/query-keys";
+import { followUpQueryKeys } from "@/modules/follow-up/hooks/query-keys";
+import { interviewQueryKeys } from "@/modules/interview/hooks/query-keys";
 import { JOB_APPLICATION_QUERY_KEY } from "@/modules/job-application/hooks/useJobApplications";
 import type {
   JobApplicationEditableField,
@@ -20,7 +22,10 @@ export const useUpdateJobApplication = (id: string) => {
     mutationFn: (request: UpdateJobApplicationRequest) =>
       jobApplicationApi.update(id, request),
     retry: false,
-    onSuccess: (application: JobApplicationResponse) => {
+    onSuccess: (
+      application: JobApplicationResponse,
+      request: UpdateJobApplicationRequest,
+    ) => {
       queryClient.setQueryData<JobApplicationDetailResponse>(
         [...JOB_APPLICATION_QUERY_KEY, "detail", id],
         (current) =>
@@ -36,6 +41,17 @@ export const useUpdateJobApplication = (id: string) => {
         predicate: (query) => !query.queryKey.includes("detail"),
       });
       void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.all });
+
+      if (
+        request.companyName !== undefined ||
+        request.roleTitle !== undefined
+      ) {
+        void queryClient.invalidateQueries({
+          queryKey: interviewQueryKeys.all,
+        });
+        void queryClient.invalidateQueries({ queryKey: followUpQueryKeys.all });
+      }
+
       toast.success("Application detail updated.");
     },
     onError: (error: Error) => {
