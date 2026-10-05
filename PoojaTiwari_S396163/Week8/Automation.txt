@@ -1,0 +1,2 @@
+Worked on automation testing 
+Link: https://github.com/trinhhieu2908/PRT681_S2026_SYD-Group3/tree/main/jobtrack-automation-tests
