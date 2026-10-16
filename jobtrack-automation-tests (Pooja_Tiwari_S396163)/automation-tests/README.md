@@ -108,12 +108,6 @@ Run a single test by ID: `npx playwright test -g "API-WF-03"`.
    than to date." message can show. The test asserts the actual behaviour (the
    invalid range is never applied).
 
-## Not covered
-
-- Résumé / cover-letter upload and preview (needs real S3 credentials).
-- Overdue follow-ups on the dashboard (the API forbids past due dates, so this
-  needs seeded data in the database).
-- Access-token expiry and silent refresh after 15 minutes in the UI.
 
 ## About `mock-api/`
 
